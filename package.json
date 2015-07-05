@@ -1,0 +1,41 @@
+{
+  "name": "adais",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Yeoman workflow for ada.is",
+  "devDependencies": {
+    "babel": "^5.5.6",
+    "babelify": "^6.1.2",
+    "browser-sync": "^2.2.1",
+    "browserify": "^10.2.4",
+    "del": "^1.1.1",
+    "grunt-jekyll": "~0.4.1",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^2.3.1",
+    "gulp-cache": "^0.2.8",
+    "gulp-eslint": "^0.13.2",
+    "gulp-exit": "0.0.2",
+    "gulp-gh-pages": "^0.5.2",
+    "gulp-grunt": "^0.5.2",
+    "gulp-if": "^1.2.5",
+    "gulp-imagemin": "^2.2.1",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-minify-css": "^1.1.1",
+    "gulp-minify-html": "^1.0.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-sass": "^2.0.0",
+    "gulp-size": "^1.2.1",
+    "gulp-sourcemaps": "^1.5.0",
+    "gulp-uglify": "^1.1.0",
+    "gulp-useref": "^1.1.1",
+    "hammerjs": "^1.0.8",
+    "load-grunt-tasks": "^3.2.0",
+    "time-grunt": "^1.2.1"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "dependencies": {
+    "grunt": "^0.4.5"
+  }
+}

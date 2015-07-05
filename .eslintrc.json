@@ -1,0 +1,24 @@
+{
+	"eqeqeq": true,
+	"forin": true,
+	"freeze": true,
+	"immed": true,
+	"newcap": true,
+	"noarg": true,
+	"nonbsp": true,
+	"undef": true,
+	"unused": "vars",
+	"trailing": true,
+	"white": true,
+
+	"esnext": true,
+	"expr": true,
+	"gcl": true,
+	"lastsemic": true,
+	"multistr": true,
+	"smarttabs": true,
+	"sub": true,
+
+	"node": true,
+	"nonstandard": true
+}
