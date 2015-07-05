@@ -5,6 +5,7 @@ html, body {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+	margin: 0;
 }
 
 body {
@@ -21,15 +22,15 @@ body {
 	perspective-origin: 50% 50%;
 
 	.slide {
-		margin: 1em 0 0 0;
-		display: inline-block;
-		width: calc(100%);
+		margin: 1em 1em 0 1em;
+		padding: 0 1em;
+		width: calc(100% - 4em);
 		height: calc(100% - 5em);
+		display: inline-block;
 		overflow: hidden;
 		position: absolute;
 		transition: transform 1.5s cubic-bezier(0.030, 0.200, 0.360, 1.210);
 		transform: translateX(-100%) translateZ(-50px) rotateY(-10deg);
-		padding: 0 1em;
 
 		img {
 			max-width: 100%;

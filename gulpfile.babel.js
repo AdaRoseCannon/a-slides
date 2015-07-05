@@ -66,7 +66,9 @@ gulp.task('browserify', function () {
 									resolve(a);
 								});
 				browserify({ debug: true })
-					.transform(babelify)
+					.transform(babelify.configure({
+						optional: ['runtime']
+					}))
 					.require(require.resolve(path), { entry: true })
 					.bundle()
 					.on('error', function(err) {
@@ -83,7 +85,7 @@ gulp.task('browserify', function () {
 	})).then(function () {
 		process.stdout.write('Browserify: Finished all\n');
 	}, function (e) {
-		process.stdout.write(e);
+		console.log(e);
 	});
 });
 
@@ -175,7 +177,8 @@ gulp.task('serve', ['jekyll', 'styles', 'browserify', 'fonts'], () => {
 	gulp.watch([
 		'dist/**/*.html',
 		'app/images/**/*',
-		'.tmp/fonts/**/*'
+		'.tmp/fonts/**/*',
+		'.tmp/scripts/**/*.js'
 	]).on('change', reload);
 
 

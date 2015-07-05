@@ -3,17 +3,8 @@ const EventEmitter = require('events').EventEmitter;
 const Peer = require('peerjs');
 const masterName = 'ada-slides-controller';
 
-const peerSettings = {
-	host: '1am.club',
-	path:"/peerjs",
-	port: 9000,
-	secure: true,
-	debug: 2
-};
-
-
 var myPeer;
-module.exports = function setup(controller = true) {
+module.exports = function setup(controller = true, perrSettings) {
 	return new Promise((resolve, reject) => {
 
 		myPeer = (controller ? new Peer(masterName, peerSettings) : new Peer(peerSettings))

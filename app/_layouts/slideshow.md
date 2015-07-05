@@ -3,11 +3,10 @@
 	{% include head.html %}
 	<body>
 		<div class="slide-container">
-			{{ content }}
+{{ content }}
 		</div>
 		<footer>
-			<small>Ada Rose Edwards - @lady_ada_king<br />
-			Extensible Web Summit Lightning Talk - 2015</small>
+			{% include footer.html %}
 		</footer>
 
 		<script src="scripts/main.js"></script>

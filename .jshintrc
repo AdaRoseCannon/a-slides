@@ -15,5 +15,5 @@
   "strict": false,
   "trailing": true,
   "smarttabs": true,
-  "predef": [ "Promise", "fetch" ]
+  "predef": [ "Promise", "fetch", "$$", "$", "make" ]
 }

@@ -3,12 +3,13 @@
 # 2. config.build.yml
 # 3. config.yml
 
-name: Ada.is
-description: The blog of Ada Rose Edwards
+name: My Title
+description: My Subtitle
 author:
-  name: Ada Rose Edwards
-  email: adaroseedwards@gmail.com
-  twitter: lady_ada_king
+  name: Jane Bloggs
+  email: fakeemail@123fakestreet.com
+  twitter: jbloggs
+  company: Acme Inc.
 
 # Grunt handles images and assets.
 exclude: ['img', '**.css', '**.js', 'fonts', 'node_modules',
@@ -16,21 +17,10 @@ exclude: ['img', '**.css', '**.js', 'fonts', 'node_modules',
 
 include: ['.htaccess']
 
-# _config.build.yml sets future and show_drafts to false on `grunt build`
-future: true
-show_drafts: true
-
 permalink: pretty
-paginate: 50
-paginate_path: 'page:num'
 
 # Markdown library
 markdown: redcarpet
-#   extensions: ['fenced_code_blocks', 'smart']
 
 pygments: true
 highlighter: pygments
-
-giturl: https://github.com/AdaRoseEdwards
-pageurl: /
-pullreq: https://github.com/AdaRoseEdwards/ada.is/tree/master/app/

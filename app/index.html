@@ -3,11 +3,6 @@ layout: slideshow
 blog_title: Ada Rose Edwards
 title: Ada.is
 ---
-
-<section class="home-posts">
-  {% for post in site.posts %}
-	<div class="slide" id="{{ post.id }}">
-		{{ post.content }}
-	</div>
-  {% endfor %}
-</section>
+{% for post in site.posts reversed%}
+<div class="slide" id="{{ post.slideId }}">{{ post.content }}</div>
+{% endfor %}

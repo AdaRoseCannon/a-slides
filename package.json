@@ -5,10 +5,12 @@
   "description": "Yeoman workflow for ada.is",
   "devDependencies": {
     "babel": "^5.5.6",
+    "babel-runtime": "^5.6.15",
     "babelify": "^6.1.2",
     "browser-sync": "^2.2.1",
     "browserify": "^10.2.4",
     "del": "^1.1.1",
+    "grunt": "^0.4.5",
     "grunt-jekyll": "~0.4.1",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^2.3.1",
@@ -28,14 +30,14 @@
     "gulp-sourcemaps": "^1.5.0",
     "gulp-uglify": "^1.1.0",
     "gulp-useref": "^1.1.1",
-    "hammerjs": "^1.0.8",
+    "hammerjs": "~2.0.4",
+    "hogan": "~1.0.2",
     "load-grunt-tasks": "^3.2.0",
+    "marked": "~0.3.3",
+    "peerjs": "~0.3.14",
     "time-grunt": "^1.2.1"
   },
   "engines": {
     "node": ">=0.8.0"
-  },
-  "dependencies": {
-    "grunt": "^0.4.5"
   }
 }
