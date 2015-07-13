@@ -3,14 +3,16 @@ const EventEmitter = require('events').EventEmitter;
 const Peer = require('peerjs');
 const masterName = 'ada-slides-controller';
 
+// Define peerJS Details
+
 var myPeer;
-module.exports = function setup(controller = true, perrSettings) {
+module.exports = function webRTCSetup({peerSettings, peerController = true}) {
 	return new Promise((resolve, reject) => {
 
-		myPeer = (controller ? new Peer(masterName, peerSettings) : new Peer(peerSettings))
+		myPeer = (peerController ? new Peer(masterName, location.hash === '#controller', peerSettings) : new Peer(peerSettings))
 			.on('error', e => {
 				if (e.type === "unavailable-id") {
-					controller = false;
+					peerController = false;
 					myPeer = new Peer(peerSettings)
 						.on('error', e => {
 							reject(e);
@@ -58,7 +60,7 @@ module.exports = function setup(controller = true, perrSettings) {
 		}
 		let user = new WebrtcUser();
 
-		if (controller) {
+		if (peerController) {
 			console.log('You have the power', id);
 			document.body.classList.add('controller');
 			myPeer.on('connection', dataConn => {
@@ -74,5 +76,14 @@ module.exports = function setup(controller = true, perrSettings) {
 			});
 		}
 		return user;
+	})
+	.then(user => {
+
+		document.addEventListener('a-slides_slide-setup', ({slideId}) =>  user.requestSlide.bind(user)(slideId));
+		document.addEventListener('a-slides_trigger-event', () => user.triggerRemoteEvent.bind(user)());
+		user.on('goToSlide', slide => document.dispatchEvent(new CustomEvent('a-slides_goto-slide-by-dom', {slide: $(`#${slide}`)})));
+		user.on('triggerEvent', () => document.dispatchEvent(new CustomEvent('a-slides_trigger-event')));
+	}, err => {
+		console.error('Failure to connect to webrtc', err);
 	});
-};
+}
