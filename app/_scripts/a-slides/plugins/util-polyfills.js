@@ -7,6 +7,9 @@ const marked = require('marked');
 window.$ = expr => document.querySelector(expr);
 window.$$ = expr => [...document.querySelectorAll(expr)];
 
+Node.prototype.$ = function(expr) { return this.querySelector(expr) ;};
+Node.prototype.$$ = function(expr) { return [...this.querySelectorAll(expr)] ;};
+
 Node.prototype.on = window.on = function (name, fn) {
 	if (!this.funcRef) this.funcRef = new Map();
 
@@ -41,6 +44,10 @@ Node.prototype.once = window.once = function (name, fn) {
 
 Node.prototype.removeSelf = function () {
 	this.parentNode.removeChild(this);
+};
+
+Node.prototype.fire = function (name, detail = {}) {
+	this.dispatchEvent(new CustomEvent(name, detail));
 };
 
 const make = {};

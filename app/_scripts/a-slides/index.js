@@ -1,21 +1,16 @@
-// Current actions which are being run through
-// stub initially
+'use strict';
 
-function ASlide(slideData, {plugins = []} = {}) {
+require('./plugins/util-polyfills');
 
-	plugins.forEach(pluginStr => {
-		let plugin = require('./' + pluginStr);
-		if (typeof plugin === 'function') {
-			plugin(slideData);
-		}
-	});
+// Setup document listeners and event handlers
+function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 
-	function setupSlide(name) {
+	const setupSlide = function setupSlide(name) {
 
-		document.dispatchEvent(new CustomEvent('a-slides_slide-setup', {slideId: name}));
+		slideContainer.fire('a-slides_slide-setup', {slideId: name});
 
 		if (slideData[name]) {
-			slideData[name].setup.bind(document.getElementById(name).querySelector('.panel-primary .panel-body'))();
+			slideData[name].setup.bind(slideContainer.$('#' + name + ' .panel-primary .panel-body'))();
 		} else {
 			slideData[name] = {
 				setup() {},
@@ -23,18 +18,18 @@ function ASlide(slideData, {plugins = []} = {}) {
 				teardown() {}
 			};
 		}
-		this.currentEvents = slideData[name].action.bind(document.getElementById(name).querySelector('.panel-primary .panel-body'))();
+
+		this.currentEvents = slideData[name].action.bind(slideContainer.$('#' + name + ' .panel-primary .panel-body'))();
 
 		// Do first action
 		this.currentEvents.next();
-	}
+	}.bind(this);
 
 	function teardownSlide(name) {
 
-
-		document.dispatchEvent(new CustomEvent('a-slides_slide-teardown', {slideId: name}));
+		slideContainer.fire('a-slides_slide-teardown', {slideId: name});
 		if (slideData[name]) {
-			slideData[name].teardown.bind(document.getElementById(name).querySelector('.panel-primary .panel-body'))();
+			slideData[name].teardown.bind(slideContainer.$('#' + name + ' .panel-primary .panel-body'))();
 		}
 	}
 
@@ -79,18 +74,29 @@ function ASlide(slideData, {plugins = []} = {}) {
 	};
 
 	// e.g. click presses next etc etc
-	document.addEventListener('a-slides_trigger-event', function triggerEvent() {
+	slideContainer.on('a-slides_trigger-event', () => {
 		if(this.currentEvents.next().done) {
 			goToNextSlide();
 		}
 	});
 
-	document.addEventListener('a-slides_next-slide', () => goToNextSlide());
-	document.addEventListener('a-slides_previous-slide', () => goToPrevSlide());
+	slideContainer.on('a-slides_next-slide', () => goToNextSlide());
+	slideContainer.on('a-slides_previous-slide', () => goToPrevSlide());
 
-	document.addEventListener('a-slides_goto-slide', e => goToSlide(e.detail.slide));
-	document.addEventListener('a-slides_goto-slide-by-number', e => goToSlide(e.detail.slide));
-	document.addEventListener('a-slides_goto-slide-by-dom' , e => goToSlideByDOM(e.detail.slide));
+	slideContainer.on('a-slides_goto-slide', e => goToSlide(e.detail.slide));
+	slideContainer.on('a-slides_goto-slide-by-number', e => goToSlide(e.detail.slide));
+	slideContainer.on('a-slides_goto-slide-by-dom' , e => goToSlideByDOM(e.detail.slide));
+
+	goToSlide(0);
+
+	plugins.forEach(plugin => {
+		if (typeof plugin === 'function') {
+			plugin({
+				slideData,
+				slideContainer
+			});
+		}
+	});
 
 }
 

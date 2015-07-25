@@ -1,8 +1,11 @@
+'use strict';
+
+require('./util-polyfills');
 
 const marked = require('marked');
 
 // Render the slides markdown.
-(function () {
+module.exports = function () {
 	const m = new Map();
 
 	// store all of the innerHTMLs
@@ -10,4 +13,4 @@ const marked = require('marked');
 
 	// then write them all out
 	m.forEach((v, k) => k.innerHTML = marked(v));
-})();
+};

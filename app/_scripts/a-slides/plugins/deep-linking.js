@@ -1,10 +1,15 @@
+'use strict';
 
-if (location.hash) {
+require('./util-polyfills');
 
-	const slide = document.querySelector(location.hash);
+module.exports = function () {
+	if (location.hash) {
 
-	// Find the slide the hash to simulate deeplinking
-	if (slide) {
-		document.dispatchEvent(new CustomEvent('a-slides_goto-slide-by-dom', {slide}));
+		const slide = $(location.hash);
+
+		// Find the slide the hash to simulate deeplinking
+		if (slide) {
+			document.fire('a-slides_goto-slide-by-dom', {slide});
+		}
 	}
-}
+};

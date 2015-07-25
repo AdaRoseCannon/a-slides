@@ -1,19 +1,25 @@
 'use strict';
 
-window.addEventListener('keyup', e => {
-	switch(e.keyCode) {
+require('./util-polyfills');
 
-		// Left Arrow
-		case 37:
-			document.dispatchEvent(new CustomEvent('a-slides_previous-slide'));
-			break;
+module.exports = function ({slideContainer}) {
+	window.addEventListener('keyup', e => {
+		switch(e.keyCode) {
 
-		// Right Arrow
-		case 13:
-		case 39:
-			document.dispatchEvent(new CustomEvent('a-slides_trigger-event'));
-			break;
-	}
-});
+			// Left Arrow
+			case 37:
+				slideContainer.fire('a-slides_previous-slide');
+				break;
 
-$('.slide-container').on('click', document.dispatchEvent(new CustomEvent('a-slides_next-slide')));
+			// Right Arrow
+			case 13:
+			case 39:
+				slideContainer.fire('a-slides_trigger-event');
+				break;
+		}
+	});
+
+	slideContainer.on('click', function () {
+		this.fire('a-slides_trigger-event');
+	});
+};
