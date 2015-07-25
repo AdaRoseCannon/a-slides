@@ -10,6 +10,7 @@ const masterName = 'ada-slides-controller';
 var myPeer;
 
 function webRTCSetup({peerSettings, peerController = true, slideContainer}) {
+
 	return new Promise((resolve, reject) => {
 
 		myPeer = (peerController ? new Peer(masterName, location.hash === '#controller', peerSettings) : new Peer(peerSettings))
@@ -91,7 +92,7 @@ function webRTCSetup({peerSettings, peerController = true, slideContainer}) {
 	});
 }
 
-module.exports = function (peerSettings, peerController) {
+module.exports = function ({peerSettings, peerController}) {
 	return function ({slideContainer}) {
 		return webRTCSetup({
 			peerSettings,
