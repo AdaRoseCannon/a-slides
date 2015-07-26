@@ -11,11 +11,11 @@ Node.prototype.$ = function(expr) { return this.querySelector(expr) ;};
 Node.prototype.$$ = function(expr) { return [...this.querySelectorAll(expr)] ;};
 
 Node.prototype.on = window.on = function (name, fn) {
-	if (!this.funcRef) this.funcRef = new Map();
+	if (!this.funcRef) this.funcRef = new Set();
 
 	// Make a new function and store it for later
-	this.funcRef.set(fn, fn.bind(this));
-	this.addEventListener(name, this.funcRef.get(fn));
+	this.funcRef.add(fn);
+	this.addEventListener(name, fn);
 };
 
 Node.prototype.prevAll = function () {
@@ -27,7 +27,7 @@ Node.prototype.prevAll = function () {
 Node.prototype.off = window.on = function (name, fn) {
 	if (!this.funcRef) return;
 	if (fn) {
-		this.removeEventListener(name, fn ? this.funcRef.get(fn) : undefined);
+		this.removeEventListener(name, fn);
 	} else {
 		this.funcRef.forEach(fn => this.removeEventListener(name, fn));
 	}
@@ -35,7 +35,6 @@ Node.prototype.off = window.on = function (name, fn) {
 };
 
 Node.prototype.once = window.once = function (name, fn) {
-	if (!this.funcRef) this.funcRef = new Map();
 	this.on(name, function tempF() {
 		fn.bind(this)();
 		this.off(name, tempF);
@@ -47,7 +46,7 @@ Node.prototype.removeSelf = function () {
 };
 
 Node.prototype.fire = function (name, detail = {}) {
-	this.dispatchEvent(new CustomEvent(name, detail));
+	this.dispatchEvent(new CustomEvent(name, {detail}));
 };
 
 const make = {};

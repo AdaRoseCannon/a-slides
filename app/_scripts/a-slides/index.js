@@ -2,47 +2,51 @@
 
 require('./plugins/util-polyfills');
 
+const slideSelector = slideId => `.slide[data-slide-id="${slideId}"] .panel.slide-content .panel-body`;
+
 // Setup document listeners and event handlers
 function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 
-	const setupSlide = function setupSlide(name) {
+	const setupSlide = function setupSlide(slideId) {
 
-		slideContainer.fire('a-slides_slide-setup', {slideId: name});
+		location.hash = slideId;
 
-		if (slideData[name]) {
-			slideData[name].setup.bind(slideContainer.$('#' + name + ' .panel-primary .panel-body'))();
+		slideContainer.fire('a-slides_slide-setup', {slideId});
+
+		if (slideData[slideId]) {
+			slideData[slideId].setup.bind(slideContainer.$(slideSelector(slideId)))();
 		} else {
-			slideData[name] = {
+			slideData[slideId] = {
 				setup() {},
 				action: function* (){yield;},
 				teardown() {}
 			};
 		}
 
-		this.currentEvents = slideData[name].action.bind(slideContainer.$('#' + name + ' .panel-primary .panel-body'))();
+		this.currentEvents = slideData[slideId].action.bind(slideContainer.$(slideSelector(slideId)))();
 
 		// Do first action
 		this.currentEvents.next();
 	}.bind(this);
 
-	function teardownSlide(name) {
+	function teardownSlide(slideId) {
 
-		slideContainer.fire('a-slides_slide-teardown', {slideId: name});
-		if (slideData[name]) {
-			slideData[name].teardown.bind(slideContainer.$('#' + name + ' .panel-primary .panel-body'))();
+		slideContainer.fire('a-slides_slide-teardown', {slideId});
+		if (slideData[slideId]) {
+			slideData[slideId].teardown.bind(slideContainer.$(slideSelector(slideId)))();
 		}
 	}
 
-	function goToSlide(i) {
-
-		const newSlide = typeof i === "number" ? $(`.slide:nth-child(${i + 1})`) : i;
+	// Slide is a dom element or an integer
+	function goToSlide({slide}) {
+		const newSlide = typeof slide === "number" ? $(`.slide:nth-child(${slide + 1})`) : slide;
 		if (!newSlide) return;
-		const newSlideId = newSlide.id;
+		const newSlideId = newSlide.dataset.slideId;
 		const oldSlide = $('.slide.active');
 		if (newSlide && newSlide !== oldSlide) {
 			if (oldSlide) {
 				oldSlide.classList.remove('active');
-				oldSlide.once('transitionend', () => teardownSlide(oldSlide.id));
+				oldSlide.once('transitionend', () => teardownSlide(oldSlide.dataset.slideId));
 			}
 			newSlide.off('transitionend');
 			newSlide.classList.add('active');
@@ -52,19 +56,11 @@ function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 	}
 
 	function goToNextSlide() {
-		goToSlide($('.slide.active').prevAll().length + 1);
+		goToSlide({slide: $('.slide.active').prevAll().length + 1});
 	}
 
 	function goToPrevSlide() {
-		goToSlide($('.slide.active').prevAll().length - 1);
-	}
-
-	function goToSlideByDOM(s) {
-		if (s.classList.contains('slide')) {
-			goToSlide(s.prevAll().length);
-		} else {
-			throw Error('Selected class must have a class of \'slide\'');
-		}
+		goToSlide({slide: $('.slide.active').prevAll().length - 1});
 	}
 
 	this.currentEvents = {
@@ -74,20 +70,15 @@ function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 	};
 
 	// e.g. click presses next etc etc
-	slideContainer.on('a-slides_trigger-event', () => {
+	slideContainer.on('a-slides_trigger-event', function () {
 		if(this.currentEvents.next().done) {
 			goToNextSlide();
 		}
-	});
+	}.bind(this));
 
 	slideContainer.on('a-slides_next-slide', () => goToNextSlide());
 	slideContainer.on('a-slides_previous-slide', () => goToPrevSlide());
-
-	slideContainer.on('a-slides_goto-slide', e => goToSlide(e.detail.slide));
-	slideContainer.on('a-slides_goto-slide-by-number', e => goToSlide(e.detail.slide));
-	slideContainer.on('a-slides_goto-slide-by-dom' , e => goToSlideByDOM(e.detail.slide));
-
-	goToSlide(0);
+	slideContainer.on('a-slides_goto-slide', e => goToSlide(e.detail));
 
 	plugins.forEach(plugin => {
 		if (typeof plugin === 'function') {

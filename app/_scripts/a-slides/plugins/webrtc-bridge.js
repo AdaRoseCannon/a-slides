@@ -85,7 +85,7 @@ function webRTCSetup({peerSettings, peerController = true, slideContainer}) {
 
 		slideContainer.on('a-slides_slide-setup', ({slideId}) =>  user.requestSlide.bind(user)(slideId));
 		slideContainer.on('a-slides_trigger-event', () => user.triggerRemoteEvent.bind(user)());
-		user.on('goToSlide', slide => slideContainer.fire('a-slides_goto-slide-by-dom', {slide: slideContainer.$(`#${slide}`)}));
+		user.on('goToSlide', slide => slideContainer.fire('a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${slide}"]`)}));
 		user.on('triggerEvent', () => slideContainer.fire('a-slides_trigger-event'));
 	}, err => {
 		console.error('Failure to connect to webrtc', err);
