@@ -8,7 +8,8 @@ const MASTER_CONTROLLER_NAME = 'ada-slides-controller';
 
 // Define peerJS Details
 
-var myPeer;
+var myPeer; // Peer
+var webRTCStatus; // Status box
 
 function webRTCSetup({peerSettings, peerController, slideContainer}) {
 
@@ -20,12 +21,7 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 		myPeer = (peerController ? new Peer(MASTER_CONTROLLER_NAME, peerSettings) : new Peer(peerSettings))
 			.on('error', e => {
 				if (e.type === "unavailable-id") {
-					peerController = false;
-					myPeer = new Peer(peerSettings)
-						.on('error', e => {
-							reject(e);
-						})
-						.on('open', resolve);
+					reject(Error('Cannot take control, controller already present.'));
 				} else {
 					reject(e);
 				}
@@ -56,7 +52,7 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 
 			// Tell all of the clients to move on one slide
 			requestSlide(i) {
-				console.log('Requseting slide', i);
+				console.log('Requesting slide', i);
 				this.sendSignalToClients('goToSlide', i);
 			}
 
@@ -91,8 +87,23 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 		slideContainer.on('a-slides_trigger-event', () => user.triggerRemoteEvent.bind(user)());
 		user.on('goToSlide', slide => slideContainer.fire('a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${slide}"]`)}));
 		user.on('triggerEvent', () => slideContainer.fire('a-slides_trigger-event'));
-	}, err => {
-		console.error('Failure to connect to webrtc', err);
+
+		// Further Event Handling
+		myPeer.on('error', e => {
+			console.log(e);
+			myPeer.destroy();
+			webRTCStatus.innerHTML = `${e.type}: ${e.message}`;
+			webRTCStatus.classList.remove('green');
+			webRTCStatus.classList.add('red');
+		});
+
+		myPeer.on('disconnected', function () {
+			setTimeout(() => {
+				if (!this.destroyed) {
+					this.reconnect();
+				}
+			}, 3000);
+		}.bind(myPeer));
 	});
 }
 
@@ -105,6 +116,15 @@ module.exports = function ({peerSettings}) {
 				peerSettings,
 				peerController: true,
 				slideContainer
+			}).then(() => {
+				webRTCStatus.classList.remove('red');
+				webRTCStatus.classList.add('green');
+				webRTCStatus.innerHTML = 'Controller';
+			}).catch(e => {
+				webRTCStatus.classList.remove('green');
+				webRTCStatus.classList.add('red');
+				webRTCStatus.innerHTML = e.message;
+				console.error(e);
 			});
 		});
 
@@ -113,7 +133,23 @@ module.exports = function ({peerSettings}) {
 				peerSettings,
 				peerController: false,
 				slideContainer
+			})
+			.then(() => {
+				webRTCStatus.classList.remove('red');
+				webRTCStatus.classList.add('green');
+				webRTCStatus.innerHTML = 'Controlled';
+			}).catch(e => {
+				webRTCStatus.classList.remove('green');
+				webRTCStatus.classList.add('red');
+				webRTCStatus.innerHTML = e.message;
+				console.error(e);
 			});
 		});
+
+		webRTCStatus = window.make.div();
+		slideController.append(webRTCStatus);
+		webRTCStatus.classList.add('red');
+		webRTCStatus.classList.add('status');
+		webRTCStatus.innerHTML = 'Not Connected';
 	};
 };

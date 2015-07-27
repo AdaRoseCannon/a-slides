@@ -72,7 +72,9 @@ function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 	// e.g. click presses next etc etc
 	slideContainer.on('a-slides_trigger-event', function () {
 		if(this.currentEvents.next().done) {
-			goToNextSlide();
+
+			// Wait a smidge before triggering the next slide.
+			setTimeout(goToNextSlide, 10);
 		}
 	}.bind(this));
 

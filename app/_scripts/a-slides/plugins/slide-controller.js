@@ -14,11 +14,15 @@ module.exports = function ({slideContainer}) {
 	closeButton.classList.add('slide-controller_close-button');
 	slideController.appendChild(closeButton);
 
+	function append(el) {
+		slideController.insertBefore(el, closeButton);
+	}
+
 	function makeAndBindButton(text, fn) {
 		const button = document.createElement('button');
 		button.innerHTML = text;
 		button.on('click', fn);
-		slideController.insertBefore(button, closeButton);
+		append(button);
 		return button;
 	}
 
@@ -28,4 +32,5 @@ module.exports = function ({slideContainer}) {
 	slideContainer.appendChild(slideController);
 
 	module.exports.makeAndBindButton = makeAndBindButton;
+	module.exports.append = append;
 };
