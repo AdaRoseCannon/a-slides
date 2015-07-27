@@ -13,5 +13,7 @@ module.exports = function ({slideContainer}) {
 		}
 
 		slideContainer.scrollLeft = 0;
+	} else {
+		slideContainer.fire('a-slides_goto-slide', {slide: 0});
 	}
 };

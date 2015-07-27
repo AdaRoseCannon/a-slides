@@ -13,7 +13,7 @@ Node.prototype.$$ = function(expr) { return [...this.querySelectorAll(expr)] ;};
 Node.prototype.on = window.on = function (name, fn) {
 	if (!this.funcRef) this.funcRef = new Set();
 
-	// Make a new function and store it for later
+	// Store it for later
 	this.funcRef.add(fn);
 	this.addEventListener(name, fn);
 };
@@ -35,8 +35,8 @@ Node.prototype.off = window.on = function (name, fn) {
 };
 
 Node.prototype.once = window.once = function (name, fn) {
-	this.on(name, function tempF() {
-		fn.bind(this)();
+	this.on(name, function tempF(e) {
+		fn.bind(this)(e);
 		this.off(name, tempF);
 	});
 };

@@ -1,19 +1,23 @@
 'use strict';
 
 require('./util-polyfills');
+const slideController = require('./slide-controller');
 const EventEmitter = require('events').EventEmitter;
 const Peer = require('peerjs');
-const masterName = 'ada-slides-controller';
+const MASTER_CONTROLLER_NAME = 'ada-slides-controller';
 
 // Define peerJS Details
 
 var myPeer;
 
-function webRTCSetup({peerSettings, peerController = true, slideContainer}) {
+function webRTCSetup({peerSettings, peerController, slideContainer}) {
+
+	if (myPeer) {
+		myPeer.destroy();
+	}
 
 	return new Promise((resolve, reject) => {
-
-		myPeer = (peerController ? new Peer(masterName, location.hash === '#controller', peerSettings) : new Peer(peerSettings))
+		myPeer = (peerController ? new Peer(MASTER_CONTROLLER_NAME, peerSettings) : new Peer(peerSettings))
 			.on('error', e => {
 				if (e.type === "unavailable-id") {
 					peerController = false;
@@ -73,7 +77,7 @@ function webRTCSetup({peerSettings, peerController = true, slideContainer}) {
 			});
 		} else {
 			console.log('You are the slides', id);
-			var dc = myPeer.connect(masterName);
+			var dc = myPeer.connect(MASTER_CONTROLLER_NAME);
 			dc.on('data', data => {
 				console.log('recieved instructions', JSON.stringify(data));
 				user.fire(data.type, data.data);
@@ -83,7 +87,7 @@ function webRTCSetup({peerSettings, peerController = true, slideContainer}) {
 	})
 	.then(user => {
 
-		slideContainer.on('a-slides_slide-setup', ({slideId}) =>  user.requestSlide.bind(user)(slideId));
+		slideContainer.on('a-slides_slide-setup', ({detail: {slideId}}) =>  user.requestSlide.bind(user)(slideId));
 		slideContainer.on('a-slides_trigger-event', () => user.triggerRemoteEvent.bind(user)());
 		user.on('goToSlide', slide => slideContainer.fire('a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${slide}"]`)}));
 		user.on('triggerEvent', () => slideContainer.fire('a-slides_trigger-event'));
@@ -92,12 +96,24 @@ function webRTCSetup({peerSettings, peerController = true, slideContainer}) {
 	});
 }
 
-module.exports = function ({peerSettings, peerController}) {
+module.exports = function ({peerSettings}) {
+
 	return function ({slideContainer}) {
-		return webRTCSetup({
-			peerSettings,
-			peerController,
-			slideContainer
+
+		slideController.makeAndBindButton('Be Slide Controller', function () {
+			webRTCSetup({
+				peerSettings,
+				peerController: true,
+				slideContainer
+			});
+		});
+
+		slideController.makeAndBindButton('Recieve Control', function () {
+			webRTCSetup({
+				peerSettings,
+				peerController: false,
+				slideContainer
+			});
 		});
 	};
 };

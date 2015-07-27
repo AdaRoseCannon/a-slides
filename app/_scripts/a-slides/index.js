@@ -39,7 +39,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 
 	// Slide is a dom element or an integer
 	function goToSlide({slide}) {
-		const newSlide = typeof slide === "number" ? $(`.slide:nth-child(${slide + 1})`) : slide;
+		const newSlide = typeof slide === "number" ? $$('.slide')[slide] : slide;
 		if (!newSlide) return;
 		const newSlideId = newSlide.dataset.slideId;
 		const oldSlide = $('.slide.active');
