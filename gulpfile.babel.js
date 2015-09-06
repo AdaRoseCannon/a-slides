@@ -216,9 +216,9 @@ gulp.task('serve:test', () => {
 gulp.task('ship', function () {
 	return gulp.src('./dist/**/*')
 		.pipe(require('gulp-gh-pages')({
-			origin: 'ssh://ada@ssh.1am.club/~/ada.is/.git',
-			remoteUrl: 'ssh://ada@ssh.1am.club/~/ada.is/.git',
-			branch: 'master'
+			origin: 'git@github.com:AdaRoseEdwards/a-slides.git',
+			remoteUrl: 'git@github.com:AdaRoseEdwards/a-slides.git',
+			branch: 'gh-pages'
 		}));
 });
 
