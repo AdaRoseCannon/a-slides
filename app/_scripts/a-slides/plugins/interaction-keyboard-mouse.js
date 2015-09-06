@@ -16,6 +16,10 @@ module.exports = function ({slideContainer}) {
 			case 39:
 				slideContainer.fire('a-slides_trigger-event');
 				break;
+
+			case 27:
+				slideContainer.classList.remove('presentation');
+				break;
 		}
 	});
 

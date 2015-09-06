@@ -10,9 +10,10 @@
 
 const ASlides = require('./a-slides');
 const slideData = require('./content');
+const slideContainer = document.querySelector('.slide-container');
 
 new ASlides(slideData, {
-	slideContainer: document.querySelector('.slide-container'),
+	slideContainer,
 	plugins: [
 		require('./a-slides/plugins/markdown'), // needs to be run first
 		require('./a-slides/plugins/slide-controller'), // needs to be run before buttons are added to it.
@@ -27,3 +28,7 @@ new ASlides(slideData, {
 		})
 	]
 });
+
+if (location.search === '?presentation') {
+	slideContainer.classList.add('presentation');
+}
