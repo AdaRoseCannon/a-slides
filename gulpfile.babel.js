@@ -119,8 +119,8 @@ gulp.task('lint', lint('app/_scripts/**/*.js', {
 }));
 gulp.task('lint:test', lint('test/spec/**/*.js', testLintOptions));
 
-gulp.task('html', ['styles'], () => {
-	const assets = $.useref.assets({searchPath: ['.tmp', 'app', '.']});
+gulp.task('html', ['styles', 'scripts'], () => {
+	const assets = $.useref.assets({searchPath: ['.tmp', 'dist']});
 
 	return gulp.src('dist/**/*.html')
 		.pipe(assets)
@@ -153,7 +153,7 @@ gulp.task('fonts', () => {
 		.pipe(gulp.dest('dist/fonts'));
 });
 
-gulp.task('copy-scripts', ['browserify'], () => {
+gulp.task('scripts', ['browserify'], () => {
 	return gulp.src([
 		'.tmp/**/*.js', // everything which has been browserified
 		'app/*.js' // service worker
@@ -164,7 +164,7 @@ gulp.task('copy-scripts', ['browserify'], () => {
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
-gulp.task('serve', ['jekyll', 'styles', 'browserify', 'fonts'], () => {
+gulp.task('serve', ['build'], () => {
 	browserSync({
 		notify: false,
 		port: 9000,
@@ -226,7 +226,7 @@ gulp.task('deploy', ['build'], function () {
 	return gulp.start('ship');
 });
 
-gulp.task('build-post', ['copy-scripts', 'html', 'images', 'fonts'], () => {
+gulp.task('build-post', ['html', 'images', 'fonts'], () => {
 	return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true})).pipe(exit());
 });
 

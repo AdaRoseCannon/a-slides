@@ -1,6 +1,8 @@
 // bower:scss
 // endbower
 
+$slide-margin: 1em;
+
 html, body {
 	width: 100%;
 	height: 100%;
@@ -45,7 +47,7 @@ body {
 
 	&.hidden, .slide-container.presentation & {
 		transition: transform ease 0.5s;
-		transform: translate(-50%, -200%);
+		transform: translateY(-200%);
 	}
 
 	.slide-controller_close-button {
@@ -63,8 +65,8 @@ body {
 
 .slide {
 	background: white;
-	margin: 1em 1em 0 1em;
-	width: calc(100% - 2em);
+	margin: 1em $slide-margin 0 $slide-margin;
+	width: calc(100% - #{2 * $slide-margin});
 	height: calc(100% - 5em);
 	display: inline-block;
 	overflow: hidden;
@@ -72,7 +74,7 @@ body {
 	top: 0;
 	left: 0;
 	transition: transform 1.5s cubic-bezier(0.030, 0.200, 0.360, 1.210);
-	transform: translateX(-100%) translateZ(-50px) rotateY(-10deg);
+	transform: translateX(-100%) translateX(-2 * $slide-margin) translateZ(-50px) rotateY(-10deg);
 	box-sizing: border-box;
 
 	img {
@@ -84,7 +86,7 @@ body {
 	}
 
 	&.active~.slide {
-		transform: translateX(100%) translateZ(-50px) rotateY(10deg);
+		transform: translateX(100%) translateX(2 * $slide-margin) translateZ(-50px) rotateY(10deg);
 	}
 
 	> .panel {
