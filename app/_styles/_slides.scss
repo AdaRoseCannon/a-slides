@@ -21,24 +21,27 @@ body {
 	transform-style: preserve-3d;
 	perspective-origin: 50% 50%;
 	user-select: none;
+	display: flex;
+	justify-content: center;
 }
 
 .slide-controller {
 	z-index: 2;
-	position: absolute;
-	left: 50%;
-	top: 0;
-	transform: translateX(-50%);
-	padding: 0.5em;
 	background-color: white;
 	box-shadow: 0 0 2em -0.5em black;
 	border-radius: 0 0 0.5em 0.5em;
     font-family: sans;
     max-width: 100%;
-    min-width: 80%;
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
+    line-height: 1.5em;
+    align-self: flex-start;
+    padding: 0.5em;
+
+     & > * {
+    	margin: 0 0.25em;
+    }
 
 	&.hidden, .slide-container.presentation & {
 		transition: transform ease 0.5s;
