@@ -19,7 +19,9 @@ new ASlides(slideData, {
 		require('./a-slides/plugins/slide-controller'), // needs to be run before buttons are added to it.
 		require('./a-slides/plugins/deep-linking'),
 		require('./a-slides/plugins/interaction-keyboard-mouse'),
-		// require('./a-slides/plugins/interaction-touch'),
+		require('./a-slides/plugins/interaction-touch')({
+			use: ['swipe-back']
+		}),
 		require('./a-slides/plugins/deep-linking'),
 		require('./a-slides/plugins/webrtc-bridge')({
 			peerSettings: {
