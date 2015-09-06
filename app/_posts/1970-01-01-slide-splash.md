@@ -19,7 +19,6 @@ slideId: slide-splash
 <div class="panel notes">
 <div class="panel-heading">Notes</div>
 <div class="panel-body marked">
-If you view the page on mobile you will see the notes,
-to view the slide view it on a large screen.
+Notes go here.
 </div>
 </div>
