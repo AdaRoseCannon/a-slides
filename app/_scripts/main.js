@@ -32,3 +32,7 @@ new ASlides(slideData, {
 if (location.search === '?presentation') {
 	slideContainer.classList.add('presentation');
 }
+
+if (location.search === '?notes') {
+	slideContainer.classList.add('hide-presentation');
+}

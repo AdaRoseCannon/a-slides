@@ -33,7 +33,12 @@ body {
 	background-color: white;
 	box-shadow: 0 0 2em -0.5em black;
 	border-radius: 0 0 0.5em 0.5em;
-    white-space: nowrap;
+    font-family: sans;
+    max-width: 100%;
+    min-width: 80%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
 
 	&.hidden, .slide-container.presentation & {
 		transition: transform ease 0.5s;
@@ -109,10 +114,17 @@ body {
 			transition:opacity ease 0.5s;
 		}
 
+		.slide-container.hide-presentation & {
+
+			&.slide-content {
+				display: none;
+			}
+		}
 
 		.slide-container.presentation & {
 
 			&.slide-content {
+				display: block;
 				transform: scale(1);
 				box-shadow: 0 0 1em -1em black;
 			}

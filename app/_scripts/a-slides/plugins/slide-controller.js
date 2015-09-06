@@ -26,7 +26,8 @@ module.exports = function ({slideContainer}) {
 		return button;
 	}
 
-	makeAndBindButton('Start Presentation', () => slideContainer.classList.toggle('presentation'));
+	makeAndBindButton('Begin', () => slideContainer.classList.toggle('presentation'));
+	makeAndBindButton('Thumbnail', () => slideContainer.classList.toggle('hide-presentation'));
 	slideController.on('click', (e) => e.cancelBubble = true);
 
 	slideContainer.appendChild(slideController);
