@@ -11,7 +11,7 @@ module.exports = function (grunt) {
 		// Configurable paths
 		yeoman: {
 			app: 'app',
-			dist: '.tmp'
+			dist: '.jekyll'
 		},
 		jekyll: {
 			options: {
@@ -22,17 +22,6 @@ module.exports = function (grunt) {
 			dist: {
 				options: {
 					dest: '<%= yeoman.dist %>',
-				}
-			},
-			server: {
-				options: {
-					config: '_config.yml',
-					dest: '.jekyll'
-				}
-			},
-			check: {
-				options: {
-					doctor: true
 				}
 			}
 		}

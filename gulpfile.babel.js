@@ -119,10 +119,10 @@ gulp.task('lint', lint('app/_scripts/**/*.js', {
 }));
 gulp.task('lint:test', lint('test/spec/**/*.js', testLintOptions));
 
-gulp.task('html', ['styles', 'scripts'], () => {
-	const assets = $.useref.assets({searchPath: ['.tmp', 'dist']});
+gulp.task('html', ['jekyll', 'styles', 'scripts'], () => {
+	const assets = $.useref.assets({searchPath: ['.tmp', 'dist', 'app']});
 
-	return gulp.src('dist/**/*.html')
+	return gulp.src('.jekyll/**/*.html')
 		.pipe(assets)
 		.pipe($.if('*.css', $.minifyCss({compatibility: '*'})))
 		.pipe(assets.restore())
@@ -164,7 +164,7 @@ gulp.task('scripts', ['browserify'], () => {
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
-gulp.task('serve', ['build'], () => {
+gulp.task('serve', ['html', 'images', 'fonts'], () => {
 	browserSync({
 		notify: false,
 		port: 9000,
@@ -182,7 +182,7 @@ gulp.task('serve', ['build'], () => {
 	]).on('change', reload);
 
 
-	gulp.watch('app/**/*.{md,html}', ['jekyll']);
+	gulp.watch('app/**/*.{md,html}', ['html']);
 	gulp.watch('app/_styles/**/*.scss', ['styles']);
 	gulp.watch('app/fonts/**/*', ['fonts']);
 	gulp.watch('app/_scripts/**/*.js', ['browserify']);
@@ -226,12 +226,8 @@ gulp.task('deploy', ['build'], function () {
 	return gulp.start('ship');
 });
 
-gulp.task('build-post', ['html', 'images', 'fonts'], () => {
+gulp.task('build', ['html', 'images', 'fonts'], () => {
 	return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true})).pipe(exit());
-});
-
-gulp.task('build', ['jekyll'], () => {
-	gulp.start('build-post');
 });
 
 gulp.task('default', ['clean'], () => {
