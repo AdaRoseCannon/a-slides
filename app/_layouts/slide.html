@@ -2,9 +2,14 @@
 <html lang="">
 	{% include head.html %}
 	<body>
-		{{ content }}
+		<div class="slide-container">
+			<div class="slide" data-slide-id="{{ page.slideId }}">
+				{{ content }}
+			</div>
+		</div>
 		<footer>
 			{% include footer.html %}
 		</footer>
+	<script src="{{page.prefix}}scripts/main.js"></script>
 	</body>
 </html>

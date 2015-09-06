@@ -119,8 +119,8 @@ gulp.task('lint', lint('app/_scripts/**/*.js', {
 }));
 gulp.task('lint:test', lint('test/spec/**/*.js', testLintOptions));
 
-gulp.task('html', ['jekyll', 'styles', 'scripts'], () => {
-	const assets = $.useref.assets({searchPath: ['.tmp', 'dist', 'app']});
+gulp.task('html', ['jekyll'], () => {
+	const assets = $.useref.assets({searchPath: ['.tmp', 'app']});
 
 	return gulp.src('.jekyll/**/*.html')
 		.pipe(assets)
@@ -162,14 +162,14 @@ gulp.task('scripts', ['browserify'], () => {
 	.pipe(gulp.dest('dist'));
 });
 
-gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
+gulp.task('clean', del.bind(null, ['.tmp', 'dist', '.jekyll']));
 
-gulp.task('serve', ['html', 'images', 'fonts'], () => {
+gulp.task('serve', ['html', 'styles', 'scripts', 'images', 'fonts'], () => {
 	browserSync({
 		notify: false,
 		port: 9000,
 		server: {
-			baseDir: ['dist', '.tmp', 'app'],
+			baseDir: [ '.tmp', 'dist', 'app'],
 			routes: {}
 		}
 	});
@@ -226,7 +226,7 @@ gulp.task('deploy', ['build'], function () {
 	return gulp.start('ship');
 });
 
-gulp.task('build', ['html', 'images', 'fonts'], () => {
+gulp.task('build', ['html', 'styles', 'scripts', 'images', 'fonts'], () => {
 	return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true})).pipe(exit());
 });
 

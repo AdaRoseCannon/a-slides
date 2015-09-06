@@ -17,7 +17,7 @@ exclude: ['img', '**.css', '**.js', 'fonts', 'node_modules',
 
 include: ['.htaccess']
 
-permalink: pretty
+permalink: /:categories-:title.html
 
 pygments: true
 highlighter: pygments

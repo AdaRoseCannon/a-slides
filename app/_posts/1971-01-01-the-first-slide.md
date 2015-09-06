@@ -1,7 +1,7 @@
 ---
 layout: slide
 title:  "Slide Splash"
-categories: Slide Show
+categories: SlideShow
 author: Ada Rose Edwards
 slideId: the-first-slide
 ---
