@@ -27,7 +27,8 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 				}
 			})
 			.on('open', resolve);
-	}).then(id => {
+	})
+	.then(id => {
 
 		class WebrtcUser {
 			constructor(controller) {
@@ -62,24 +63,29 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 				this.sendSignalToClients('triggerEvent');
 			}
 		}
-		let user = new WebrtcUser();
+		let user = new WebrtcUser(!!peerController);
 
-		if (peerController) {
-			console.log('You have the power', id);
-			slideContainer.classList.add('controller');
-			myPeer.on('connection', dataConn => {
-				console.log('recieved connection from', dataConn.peer);
-				user.addClient(dataConn);
-			});
-		} else {
-			console.log('You are the slides', id);
-			var dc = myPeer.connect(MASTER_CONTROLLER_NAME);
-			dc.on('data', data => {
-				console.log('recieved instructions', JSON.stringify(data));
-				user.fire(data.type, data.data);
-			});
-		}
-		return user;
+		return new Promise(function (resolve) {
+			if (peerController) {
+				console.log('You have the power', id);
+				slideContainer.classList.add('controller');
+				myPeer.on('connection', dataConn => {
+					console.log('recieved connection from', dataConn.peer);
+					user.addClient(dataConn);
+				});
+			} else {
+				console.log('You are a client', id);
+				myPeer.connect(MASTER_CONTROLLER_NAME).on('data', data => {
+					console.log('recieved instructions', JSON.stringify(data));
+					user.fire(data.type, data.data);
+				});
+				myPeer.on('connection', dataConn => {
+					console.log('recieved connection from', dataConn.peer);
+					user.addClient(dataConn);
+				});
+			}
+			resolve(user);
+		});
 	})
 	.then(user => {
 
@@ -90,11 +96,19 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 
 		// Further Event Handling
 		myPeer.on('error', e => {
-			console.log(e);
-			myPeer.destroy();
-			webRTCStatus.innerHTML = `${e.type}: ${e.message}`;
-			webRTCStatus.classList.remove('green');
-			webRTCStatus.classList.add('red');
+
+			// Handle the could not connect situation
+			if (e.type === "peer-unavailable" && e.message === 'Could not connect to peer ada-slides-controller') {
+
+				// Wait a few seconds and try reconnecting
+				console.log('Lost connection to client.');
+			} else {
+				console.log(e);
+				myPeer.destroy();
+				webRTCStatus.innerHTML = `${e.type}: ${e.message}`;
+				webRTCStatus.classList.remove('green');
+				webRTCStatus.classList.add('red');
+			}
 		});
 
 		myPeer.on('disconnected', function () {
@@ -151,5 +165,26 @@ module.exports = function ({peerSettings}) {
 		webRTCStatus.classList.add('red');
 		webRTCStatus.classList.add('status');
 		webRTCStatus.innerHTML = 'Not Connected';
+
+		// if the client search param is present then jump
+		// straight into presentation and try to connect.
+		if (location.search === "?client") {
+			slideContainer.classList.add('presentation');
+			webRTCSetup({
+				peerSettings,
+				peerController: false,
+				slideContainer
+			})
+			.then(() => {
+				webRTCStatus.classList.remove('red');
+				webRTCStatus.classList.add('green');
+				webRTCStatus.innerHTML = 'Controlled';
+			}).catch(e => {
+				webRTCStatus.classList.remove('green');
+				webRTCStatus.classList.add('red');
+				webRTCStatus.innerHTML = e.message;
+				console.error(e);
+			});
+		}
 	};
 };
