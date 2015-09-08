@@ -21,3 +21,5 @@ permalink: /:categories-:title.html
 
 pygments: true
 highlighter: pygments
+
+markdown: redcarpet

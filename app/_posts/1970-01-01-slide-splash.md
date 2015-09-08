@@ -1,8 +1,6 @@
 ---
 layout: slide
-title:  "Slide Splash"
 categories: SlideShow
-author: Ada Rose Edwards
 slideId: slide-splash
 ---
 
@@ -19,6 +17,7 @@ slideId: slide-splash
 <div class="panel notes">
 <div class="panel-heading">Notes</div>
 <div class="panel-body marked">
-Notes go here.
+* Hi, I'm Ada Rose from FTLabs
+* I’m here to talk today about practical rendering performance and animation.
 </div>
 </div>

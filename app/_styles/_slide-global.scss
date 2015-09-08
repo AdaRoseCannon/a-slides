@@ -1,4 +1,13 @@
 .slide {
 	font-family: helvetica, sans;
 	box-shadow: 0 0 3em -1em black;
+	font-size: 24px;
+
+	h1 {
+		whitespace: nowrap;
+	}
+
+	.slide-content {
+		background-color: white;
+	}
 }

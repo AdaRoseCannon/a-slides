@@ -1,12 +1,15 @@
 ---
 layout: slide
+title: Long Form Notes
 ---
-<div class="marked" style="padding:2em; overflow: scroll; mouse-events: auto;">
+<div class="marked" style="padding:2em; overflow: scroll; height: 100%;">
+
+This talk covers animation both in the DOM and pratises which can also apply to general animation in the web.
 
 In the Browser we have a goal to reach 60fps, which gives us 16ms to render a single frame.  
 Jank is when the frame takes longer to layout and render than 16ms.
 It causes a stutter, which feels bad.  
-A long frame is caused by slow, synchronous main thread activity this can be most simply a long main thread loop or blocking io (XHR or large local storage transactions).
+A long frame is caused by slow, synchronous main thread activity this can be most simply a long main thread loop in javascript or blocking io (e.g. synchronous XHR or large local storage transactions).
 
 However most commonly it is caused by the layouts and paints used to render the page.
 
@@ -70,7 +73,8 @@ This method follows up from a great talk given by Paul Lewis ([@aerotwist](https
 (Next example in the slides follows this through step by step)
 
  > ### Note:
- > <a href="/blog/2015/04/29/animation-perf-follow-up/" target="_blank">This follow up post</a> goes into some more detail since this doesn't work that well in all situations. That post fixes an issue with animating nested scale transforms with css transitions.
+
+ REWRITE THIS BUT USING TWEEN.JS THE PRACTICE IS GOOD BUT THE EXAMPLE DOES NOT WORK
 
 * Measure every element we want to animate.
 * Store the current animation so it can be restored later set it to ‘0s’
@@ -87,9 +91,6 @@ This method follows up from a great talk given by Paul Lewis ([@aerotwist](https
 * On transitionend
 * Restore the transitions
 * Fire any callbacks
-
-<blockquote class="twitter-tweet" lang="en"><p>This is the code for the smooth layout demo: <a href="https://t.co/fgWeP4DhrG">https://t.co/fgWeP4DhrG</a> <a href="https://twitter.com/hashtag/extwebsummit?src=hash">#extwebsummit</a> apolgies for the jQuery I wrote it in a hurry.</p>&mdash; Ada Rose Edwards ♥ (@Lady_Ada_King) <a href="https://twitter.com/Lady_Ada_King/status/590200595086082049">April 20, 2015</a></blockquote>
-<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 # Layout Boundaries and Containment
 
@@ -110,6 +111,8 @@ The containment spec requires certain properties, such as no scrolling and fixed
 }
 {% endhighlight %}
 
+NEED TO UPDATE PROGRESS OF CONTAIN - DO I INCLUDE IT AT ALL??!!
+
 Containment could be done in browsers previously, but it relied on the element having certain properties before it would have layout boundaries, such as a fixed height and no scroll and relied upon the browser's implementation.
 
 Containment is really good because it makes explicit as a performance enhancement what was previously a full set of properties. The performance gains from these could not be relied upon in every browser and using styling hacks for perf feels messy.
@@ -117,6 +120,101 @@ Containment is really good because it makes explicit as a performance enhancemen
 Containment will enforce the styling neccessary for the performance which means it could potentially collapse down a box without a height and width set (either to 300px x 150px or to 0 x 0). It will clip all content outside of itself.
 
 ***Note:*** Layout Containment is _not_ style containment as defined in the web components spec.  Style containment stops custom elements styling affecting other elements; layout containment is a css property in draft to aid performance by allowing the browser to isolate elements from the rest of the DOM's layout tree.
+
+# Synchronous IO operations
+
+Of the older webapis which are synchronous Local Storage is probably the most commonly still used. There are several situations where it can be slow:
+
+http://www.stevesouders.com/blog/2014/02/11/measuring-localstorage-performance/ 
+
+Although recent tests on Cr45 for mobile and desktop show that performance is about 1/3 of writing to memory. So don't do it in a crazy loop and you'll be fine.
+
+# CPU intensive tasks
+
+Phyically accurate snow flakes on your christmas themed website. Use a worker for stuff like this. A nice interface is to write a wrapper which returns promises, (have example now works in Cr45 and FF).
+
+Pattern for promise based worker handling.
+
+Tween your own animations:
+
+Tween.js rules!
+
+Main thread:
+
+{% highlight js %}
+function workerMessage(message) {
+
+	// This wraps the message posting/response in a promise, which will resolve if the response doesn't
+	// contain an error, and reject with the error if it does. If you'd prefer, it's possible to call
+	// controller.postMessage() and set up the onmessage handler independently of a promise, but this is
+	// a convenient wrapper.
+	return new Promise(function(resolve, reject) {
+		const messageChannel = new MessageChannel();
+		messageChannel.port1.onmessage = function(event) {
+			if (event.data.error) {
+				messageChannel.port1.onmessage = undefined;
+				reject(event.data.error);
+			} else {
+				messageChannel.port1.onmessage = undefined;
+				resolve(event.data);
+			}
+		};
+
+		// This sends the message data as well as transferring messageChannel.port2 to the service worker.
+		// The service worker can then use the transferred port to reply via postMessage(), which
+		// will in turn trigger the onmessage handler on messageChannel.port1.
+		// See https://html.spec.whatwg.org/multipage/workers.html#dom-worker-postmessage
+		myWorker.postMessage(message, [messageChannel.port2]);
+	});
+}
+
+workerMessage({
+	action: 'doThing',
+	myVar: 4
+})
+.then(data => {
+	console.log(data.response);
+});
+{% endhighlight %}
+
+Worker:
+
+{% highlight js %}
+
+// Recieve messages from the client and reply back onthe same port
+self.addEventListener('message', function(event) {
+		Promise.resolve()
+		.then(function () {
+
+			switch(event.data.action) {
+
+				case 'doThing':
+					event.data.result = expensiveThing();
+
+				default:
+					throw Error('Invalid Action');
+			}
+		})
+		.then(function () {
+			event.data.success = true;
+		}, function (err) {
+			console.error(err);
+			event.data.success = false;
+			if (err) {
+				event.data.message = err.message ? err.message : err;
+			}
+		})
+		.then(function () {
+			event.ports[0].postMessage(event.data);
+		});
+});
+{% endhighlight %}
+
+# WebGL Vertex Shaders
+
+If working with WebGL and are animating a fixed topology e.g. Waves, Data Displays. Do the vertex transforms in the vertex shader rather than calculating a buffer geometry on the cpu, you will get much better performance. E.g. sound bunny.
+
+# SIMD if working with intel's xdk
 
 # References
 * <a href="http://dev.w3.org/csswg/css-containment/" target="_blank">Containment Spec</a>
