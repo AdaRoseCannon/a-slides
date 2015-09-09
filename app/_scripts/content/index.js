@@ -3,6 +3,8 @@
  */
 
 module.exports = {
-	'slide-splash': undefined,
-	'jank': require('./jank'),
+	'/jank': require('./jank'),
+	'/dom': require('./dom'),
+	'/dom2': require('./dom2'), // Page removed
+	'/containment': require('./containment'),
 };

@@ -2,10 +2,6 @@ var appendTarget;
 
 var contentToAppend = [
 
-'# Performance, what is jank?',
-
-'<img src="images/jank-profile.png" />',
-
 `## Slow 🐢
 * Layout
 * Paint`,
@@ -15,6 +11,13 @@ var contentToAppend = [
 yield`
 
 ];
+
+var cssTriggers = [
+	'## Great Resource:',
+	"### Paul Lewis's CSS Triggers",
+	'![](images/css-triggers.png)',
+	'# http://csstriggers.com/'
+].join('\n');
 
 // In this context this refers to the DOM element
 // which is displayed as the slideshow.
@@ -27,7 +30,12 @@ module.exports = {
 		// Append the target to the dom
 		this.appendChild(appendTarget);
 
-		// Add the text line by line on click
+		appendTarget.addMarkdown('# Performance, what is jank?');
+		yield;
+
+		appendTarget.addMarkdown('<div><img src="images/jank-profile.png" /></div>');
+		yield;
+
 		for(let content of contentToAppend) {
 			const child = make.div();
 			child.style.display = 'inline-block';
@@ -37,6 +45,10 @@ module.exports = {
 			appendTarget.appendChild(child);
 			yield;
 		}
+
+		appendTarget.empty();
+		appendTarget.appendChild(make.markdown(cssTriggers));
+		yield;
 	},
 	teardown() {
 		if (appendTarget) {

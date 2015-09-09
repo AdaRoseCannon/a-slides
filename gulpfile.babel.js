@@ -119,7 +119,7 @@ gulp.task('lint', lint('app/_scripts/**/*.js', {
 }));
 gulp.task('lint:test', lint('test/spec/**/*.js', testLintOptions));
 
-gulp.task('html', ['jekyll'], () => {
+gulp.task('html', ['jekyll', 'styles'], () => {
 	const assets = $.useref.assets({searchPath: ['.tmp', 'app']});
 
 	return gulp.src('.jekyll/**/*.html')
@@ -164,7 +164,7 @@ gulp.task('scripts', ['browserify'], () => {
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist', '.jekyll']));
 
-gulp.task('serve', ['html', 'styles', 'scripts', 'images', 'fonts'], () => {
+gulp.task('serve', ['html', 'scripts', 'images', 'fonts'], () => {
 	browserSync({
 		notify: false,
 		port: 9000,
@@ -183,7 +183,7 @@ gulp.task('serve', ['html', 'styles', 'scripts', 'images', 'fonts'], () => {
 
 
 	gulp.watch('app/**/*.{md,html}', ['html']);
-	gulp.watch('app/_styles/**/*.scss', ['styles']);
+	gulp.watch('app/_styles/**/*.scss', ['html']);
 	gulp.watch('app/fonts/**/*', ['fonts']);
 	gulp.watch('app/_scripts/**/*.js', ['browserify']);
 });

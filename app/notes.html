@@ -4,6 +4,12 @@ title: Long Form Notes
 ---
 <div class="marked" style="padding:2em; overflow: scroll; height: 100%;">
 
+# To add
+
+Include 6doam and Sound bunny as iframe examamples discuss what was done to make them fast.
+
+----------
+
 This talk covers animation both in the DOM and pratises which can also apply to general animation in the web.
 
 In the Browser we have a goal to reach 60fps, which gives us 16ms to render a single frame.  
@@ -12,6 +18,8 @@ It causes a stutter, which feels bad.
 A long frame is caused by slow, synchronous main thread activity this can be most simply a long main thread loop in javascript or blocking io (e.g. synchronous XHR or large local storage transactions).
 
 However most commonly it is caused by the layouts and paints used to render the page.
+
+The ideal feeling is one of native that their very expensive device is not struggling to display simple a web page.
 
 ---------
 
@@ -56,41 +64,14 @@ In an mvc or a large framework with many independent modules it can be difficult
 
 ***A good general motto is to calculate all DOM changes first then apply them in a single step.***
 
-### Animating an interaction which causes a lot of change to the layout.
+# Why is layout so hard on the browser?
+One of the primary reasons is that type is really difficult to render and flow. It's very easy to take type for granted because type is everywhere on the web.
 
-Let's say we have a widget in which notifications get appended. <a href="https://www.1am.club/~ada/ews-slides/#slide-3" target="_blank">(Slide showing the notification example)</a> As a new element gets added the widget grows in height.  
-We want to animate prepending an element to the start.
-Here we have an issue because the height changes which pushes many elements around the page,
-so it's expensive because it's a layout operation and much worse because the whole page will change so layout needs to be performed on the entire document.
+## What about paint why is it difficult?
+Paint is difficult because it involves the cpu rerendering many bitmaps and storing them in memory.
 
-But following our advice from earlier before we insert the new notification we can measure how everything will change then animate that change. (Click twice to demo the smooth interaction)
-
-When doing something like this it is best to front load all of the dom read/writes so the app is responsive as the animation finishes.
-
-If doing a DOM change on a user interaction then you have about a whole 100ms (~6 frames) to measure and write to the DOM before it feels sluggish. Which is plenty of time to perform these measurements.
-This method follows up from a great talk given by Paul Lewis ([@aerotwist](https://twitter.com/aerotwist)) at the Chrome Dev Summit.
-
-(Next example in the slides follows this through step by step)
-
- > ### Note:
-
- REWRITE THIS BUT USING TWEEN.JS THE PRACTICE IS GOOD BUT THE EXAMPLE DOES NOT WORK
-
-* Measure every element we want to animate.
-* Store the current animation so it can be restored later set it to ‘0s’
-* Store the current transform so it can be restored later
-* Perform the function
-* Measure the new positions, sizes,
-* Anything which has changed size: scale it and all give all of its children the inverse transform.
-* Give all the children the offset of the top left of the parent
-* Give them the inverse scale
-* Apply the translations to move everything to its new place
-* Apply the new transition to everything affected
-* Set all of the transforms to their original values
-* Watch everything smoothly animate.
-* On transitionend
-* Restore the transitions
-* Fire any callbacks
+## How come compositing is so fast then?
+Rotating or scaling is all done off the main thread on the your phone/desktop's graphics chip and graphics cards are very good at applying transforms. 
 
 # Layout Boundaries and Containment
 
@@ -121,17 +102,34 @@ Containment will enforce the styling neccessary for the performance which means 
 
 ***Note:*** Layout Containment is _not_ style containment as defined in the web components spec.  Style containment stops custom elements styling affecting other elements; layout containment is a css property in draft to aid performance by allowing the browser to isolate elements from the rest of the DOM's layout tree.
 
+# How to be fast.
+
+Consider the main thread as the thread which handles rendering. Whether writing a webapp or a 2D canvas game or 3D VR experience. 
+
 # Synchronous IO operations
 
 Of the older webapis which are synchronous Local Storage is probably the most commonly still used. There are several situations where it can be slow:
 
 http://www.stevesouders.com/blog/2014/02/11/measuring-localstorage-performance/ 
 
-Although recent tests on Cr45 for mobile and desktop show that performance is about 1/3 of writing to memory. So don't do it in a crazy loop and you'll be fine.
+Although recent tests on Cr45 for mobile and desktop show that performance is about 1/3 of writing to memory. It may be best to use an async storage such as IndexedDB.
 
 # CPU intensive tasks
 
-Phyically accurate snow flakes on your christmas themed website. Use a worker for stuff like this. A nice interface is to write a wrapper which returns promises, (have example now works in Cr45 and FF).
+When the page looks like it is ready to be used it should also be readily responding to a users interactions.
+
+Parsing JS and decoding images can also quite extensive. Although it's great to have everything cached before the user needs it. Front loading everything is a great way to make the user's first impressions really awful. 
+
+Especially if there initial landing is before your UI interaction scripts are ready and all they have is a pretty picture of your above the fold content. 
+
+Parsing a large JSON file is slow. Download it in your SW so it is off the main thread then query it as needed.
+
+If you need to query a large JSON file but don't _need_ all the data right there and then. Instead break it into chunks and load a bit each frame.
+
+Or load it all in the service worker, message the SW to pull out the bits you need.
+
+Phyically accurate snow flakes on your christmas themed website. Use a worker for stuff like this. Many libraries for Verlet Integration and Physics will run just as well in a worker.
+A nice interface is to write a wrapper which returns promises for your physics objects, (have example now works in Cr45 and FF).
 
 Pattern for promise based worker handling.
 
@@ -210,11 +208,31 @@ self.addEventListener('message', function(event) {
 });
 {% endhighlight %}
 
-# WebGL Vertex Shaders
+# WebGL Shaders
 
 If working with WebGL and are animating a fixed topology e.g. Waves, Data Displays. Do the vertex transforms in the vertex shader rather than calculating a buffer geometry on the cpu, you will get much better performance. E.g. sound bunny.
 
-# SIMD if working with intel's xdk
+## Super crazy (don't do this),
+
+If you want to do calculations and take advantage of the graphics card ability for vector arithmatic and float handling. You can write a glsl shader for your calculation render it to a framebuffer then use glReadPixels. Process the raw byte data to get actual numbers.
+
+### SIMD if working with intel's xdk
+
+# For rendering games
+
+* Don't render what is off screen, set your draw distance to something reasonable.
+* Calculate physics as you need it. Don't run physics where the user won't notice it.
+* Even if you are running physics in a worker don't want to overheat the phone.
+
+### Image of users face melting off in vr
+
+Don't try optimising this for DOM the browser will take care of this.
+
+# Make it feel fast,
+
+* Make sure scrolling is responsive
+* Make it behave from the moment the page is loaded.
+* An app interstitial that doesn't have working x button because the js load is a great way to get users to bounce.
 
 # References
 * <a href="http://dev.w3.org/csswg/css-containment/" target="_blank">Containment Spec</a>

@@ -1,7 +1,6 @@
 ---
 layout: slide
 categories: SlideShow
-slideId: slide-splash
 ---
 
 <div class="panel slide-content">

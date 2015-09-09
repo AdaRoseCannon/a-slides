@@ -11,3 +11,29 @@
 		background-color: white;
 	}
 }
+
+.dimensionIndicator {
+	position: absolute;
+	color: white;
+	background: rgba(0, 0, 128, 0.5);
+	overflow: hidden;
+
+	&:after, &:before {
+		border: solid 3px white;
+		padding: 1em;
+		position: absolute;
+		margin: 0.5em;
+	}
+	&:before {
+		content: attr(data-tl);
+		border-bottom: 0;
+		border-right: 0;
+	}
+	&:after {
+		content: attr(data-br);
+		border-top: 0;
+		border-left: 0;
+		bottom: 0;
+		right: 0;
+	}
+}

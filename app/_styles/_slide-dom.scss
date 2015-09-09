@@ -1,0 +1,62 @@
+.slide[data-slide-id="/dom"] .panel.slide-content {
+
+	@-webkit-keyframes bad {
+		0% {width: 1.5em;}
+		50% {width: 4em;}
+		100% {width: 1.5em;}
+	}
+
+	@-webkit-keyframes squidge {
+		0% {width: 100%;}
+		50% {width: 60%;}
+		100% {width: 100%;}
+	}
+
+	@keyframes bad {
+		0% {width: 1.5em;}
+		50% {width: 4em;}
+		100% {width: 1.5em;}
+	}
+
+	@keyframes squidge {
+		0% {width: 100%;}
+		50% {width: 60%;}
+		100% {width: 100%;}
+	}
+
+
+	.emoji-image-container {
+		font-size: 10em;
+		line-height: 1em;
+		padding: 0 0.1em 0.1em 0.1em;
+		border: 1px solid grey;
+		margin: 0.2em;
+		text-align: center;
+		border-radius: 0.2em;
+		width: 1.5em;
+		color: green;
+		float: left;
+
+		&.bad-anim-div {
+			color: red;
+			float: left;
+			animation-name: bad;
+			animation-duration: 4s;
+			animation-iteration-count: infinite;
+
+			&.bad2 {
+				float: right;
+				animation-delay: 2s;
+			}
+		}
+	}
+
+	.squidge {
+		animation-name: squidge;
+		animation-duration: 4s;
+		animation-iteration-count: infinite;
+		font-size: 0.5em;
+		color: grey;
+	}
+
+}
