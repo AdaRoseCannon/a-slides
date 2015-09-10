@@ -26,9 +26,6 @@ module.exports = {
 	action: function* () {
 		this.appendChild(appendTarget);
 
-		appendTarget.innerHTML = content.squidge;
-		yield;
-
 		var i = 0;
 		var pre = document.createElement('pre');
 		appendTarget.empty().appendChild(pre);
@@ -37,6 +34,46 @@ module.exports = {
 			pre.append('\n');
 		}, 800);
 		yield;
+
+
+		clearInterval(t);
+		pre.innerHTML = '';
+		t = setInterval(() => {
+			pre.append('myDomEl.innerHTML += "I know a song which\'ll get on your nerves...";');
+			pre.append('\n');
+		}, 800);
+		yield;
+
+		clearInterval(t);
+		appendTarget.innerHTML = '<img src="images/fastdom.png" />';
+		yield;
+
+		appendTarget.innerHTML = content.squidge;
+		yield;
+
+		appendTarget.innerHTML = `<div class="fancy">Lorem Ipsum is simply dummy text of the printing and 
+								typesetting industry. Lorem Ipsum has been the industry's standard 
+								dummy text ever since the 1500s, Quisque pellentesqu'e malesu
+								ada ex,
+								 ut malesuada nunc elementum tincidunt. Cras pulvinar consectetur 
+								 odio non pellentesque. Vestibulum ante ipsum primis in 
+								 faucibus orci luctus et ultrices posuere cubilia Curae; Donec quis
+								  ullamcorper mi. Pellentesque justo eros, consequat at efficitur vitae
+								  , tristique at dolor. Etiam posuere sapien urna, a egestas eros tincidunt non.
+								</div>`;
+		yield;
+
+		appendTarget.innerHTML = '<div class="pretty1">🌝</div>' + 
+								'<div class="pretty2">🌝</div>' + 
+								'<div class="pretty3">🌝</div>' + 
+								'<div class="pretty4">🌝</div>' + 
+								'<div class="pretty5">🌝</div>' + 
+								'<div class="pretty6">🌝</div>' + 
+								'<div class="pretty7">🌝</div>' + 
+								'<div class="pretty8">🌝</div>' + 
+								'<div class="pretty9">🌝</div>';
+		yield;
+
 	},
 	teardown() {
 

@@ -1,17 +1,5 @@
 .slide[data-slide-id="/dom"] .panel.slide-content {
 
-	@-webkit-keyframes bad {
-		0% {width: 1.5em;}
-		50% {width: 4em;}
-		100% {width: 1.5em;}
-	}
-
-	@-webkit-keyframes squidge {
-		0% {width: 100%;}
-		50% {width: 60%;}
-		100% {width: 100%;}
-	}
-
 	@keyframes bad {
 		0% {width: 1.5em;}
 		50% {width: 4em;}
@@ -24,6 +12,19 @@
 		100% {width: 100%;}
 	}
 
+	@keyframes pretty{
+		0% 	{ 
+	        transform: rotate(0deg) 
+	                   translate(-100px)
+	                   rotate(0deg); 
+	  }
+	  
+		100%{ 
+	        transform: rotate(360deg) 
+	                   translate(-100px) 
+	                   rotate(-360deg); 
+	  }
+	}
 
 	.emoji-image-container {
 		font-size: 10em;
@@ -57,6 +58,20 @@
 		animation-iteration-count: infinite;
 		font-size: 0.5em;
 		color: grey;
+	}
+	@for $i from 1 through 10 {
+		$delay: ($i * 0.1) + s;
+		$size: ($i * 0.5) + em;
+	    .pretty#{$i} {
+	    	position:absolute;
+	    	top: 50%;
+	    	left: 50%;
+			animation-name: pretty;
+			animation-duration: 4s;
+			animation-iteration-count: infinite;
+			animation-delay: $delay;
+			font-size: $size;
+		}
 	}
 
 }

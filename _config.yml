@@ -23,3 +23,5 @@ pygments: true
 highlighter: pygments
 
 markdown: redcarpet
+
+excerpt_separator: qwertyuiopsdfghjkl

@@ -9,6 +9,34 @@
 
 	.slide-content {
 		background-color: white;
+		.panel-body {
+			height: 100%;
+		}
+	}
+}
+
+.small-text {
+	font-size: 6px;
+}
+
+.flex {
+	display: flex;
+    justify-content: center;
+
+	div, h1 {
+		flex: 1 0;
+	}
+}
+
+.fancy {
+	font-family: serif;
+	&::first-letter {
+	    font-size: 200%;
+	    color: #8A2BE2;
+	    display: inline-block;
+	    position: relative;
+	    top: 1em;
+	    line-height: 1em;
 	}
 }
 
@@ -17,6 +45,7 @@
 	color: white;
 	background: rgba(0, 0, 128, 0.5);
 	overflow: hidden;
+	font-size: 12pt;
 
 	&:after, &:before {
 		border: solid 3px white;
