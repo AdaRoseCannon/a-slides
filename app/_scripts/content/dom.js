@@ -46,6 +46,39 @@ module.exports = {
 		appendTarget.innerHTML = '<img src="images/fastdom.png" />';
 		yield;
 
+		appendTarget.innerHTML = `
+			<div class="fastdom-container unsorted">
+				<div class="fastdom read" style="order: 1;"><pre>readFunc1()</pre></div>
+				<div class="fastdom write" style="order: 2;"><pre>writeFunc1()</pre></div>
+				<div class="fastdom read" style="order: 1;"><pre>readFunc2()</pre></div>
+				<div class="fastdom write" style="order: 2;"><pre>writeFunc2()</pre></div>
+				<div class="fastdom read" style="order: 1;"><pre>readFunc3()</pre></div>
+				<div class="fastdom write" style="order: 2;"><pre>writeFunc3()</pre></div>
+				<div class="fastdom read" style="order: 1;"><pre>readFunc4()</pre></div>
+				<div class="fastdom write" style="order: 2;"><pre>writeFunc4()</pre></div>
+			</div>
+		`;
+
+		const m = new Map();
+		appendTarget.$$('.fastdom').forEach(el => m.set(el, el.getBoundingClientRect()));
+
+		appendTarget.$('.fastdom-container').classList.remove('unsorted');
+
+		const scale = $('.slide-container.presentation') ? 1 : 0.4;
+
+		m.forEach((rect1, el) => {
+			const rect2 = el.getBoundingClientRect();
+			el.style.transform = `translate(${(rect1.left - rect2.left)/scale}px, ${(rect1.top - rect2.top)/scale}px)`;
+		});
+
+		yield;
+
+		m.forEach((rect1, el) => el.css({
+			transform: `scale(1)`,
+			transition: `transform 2s ease`
+		}));
+		yield;
+
 		appendTarget.innerHTML = content.squidge;
 		yield;
 

@@ -15,4 +15,4 @@ var resources = [
 
 toolbox.precache(resources);
 
-toolbox.router.default = toolbox.fastest;
+toolbox.router.default = (location.protocol === 'http:' || location.hostname === 'localhost') ? toolbox.networkFirst : toolbox.fastest;

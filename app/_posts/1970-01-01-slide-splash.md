@@ -18,15 +18,21 @@ categories: SlideShow
 <div class="panel-body marked">
 * Hi, I'm Ada Rose from FTLabs
 
-This talk covers rendering and animation performance. Both in the DOM and also general 2D and 3D animation in the web.
+Aim to cover rendering and animation performance.
 
-***Insert conclusion***
+Both in the DOM and also general 2D and 3D animation in the web.
 
-The ideal feeling is that of a native experience. The user shouldn't feel their very expensive device is struggling to display a simple a web page. To achieve this we have a goal framerate of 60fps, which gives us 16ms to render a single frame.
+The ideal feeling is that of a native experience.
 
-When the frame takes longer to layout and render than 16ms that is jank. It looks like a stuttery discontinuity in the animation. 60fps with occasional hiccoups feels much slower than a continuous 30fps.
+The goal of performance is so that the user doesn't notice the web page.
 
-A long frame is caused by too much blocking activity in the main thread this can be most simply a long main thread loop in javascript or blocking io (e.g. synchronous ajax requests or very large local storage transactions).
+* Make sure user interactions such as scrolling/dragging is responsive
+* From the moment the content is visible
+* Manage user expectations, don't show what they cannot interact with
+* Usually this means taking time to calculate an animation before rendering it
+* If you can move as much as possible out of the main thread, into workers or onto the graphics card.
+
+I'll begin with rendering the DOM then move onto some practises which help for animated visuals.
 
 </div>
 </div>
