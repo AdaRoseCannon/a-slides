@@ -30,7 +30,7 @@ module.exports = {
 		var pre = document.createElement('pre');
 		appendTarget.empty().appendChild(pre);
 		t = setInterval(() => {
-			pre.addHTML(i++ % 2 === 1 ? 'myVar = el.clientHeight;' : 'el.height = (myVar + 1) + "px"\n');
+			pre.addHTML(i++ % 2 === 1 ? 'myVar = el.clientHeight;\n' : 'el.height = (myVar + 1) + "px"\n');
 		}, 800);
 		yield;
 
