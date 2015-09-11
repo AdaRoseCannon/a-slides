@@ -4,13 +4,7 @@ categories: SlideShow
 ---
 
 <div class="panel slide-content">
-<div class="panel-body marked">
-
-Wily cyote
-
-Wily cyote backfire
-
-Child Eating giant icecream
+<div class="panel-body">
 
 </div>
 </div>

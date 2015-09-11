@@ -10,4 +10,5 @@ module.exports = {
 	'/containment': require('./containment'),
 	'/demos': require('./demos'),
 	'/simd': require('./simd'),
+	'/frontloading': require('./frontloading'),
 };

@@ -19,10 +19,6 @@ module.exports = {
 		// Append the target to the dom
 		this.appendChild(appendTarget);
 
-		appendTarget
-		.addHTML(`<iframe src="http://ftlabs-six-degrees-404.herokuapp.com/404.html" style="width: 100%; height: 100%;" seamless=true>`);
-		yield;
-
 		appendTarget.empty()
 		.addHTML(`<iframe src="https://adaroseedwards.github.io/SoundThing/index.html" style="width: 100%; height: 100%;" seamless=true>`);
 		yield;
