@@ -1,10 +1,16 @@
 .slide {
-	font-family: helvetica, sans;
+	font-family: 'Open Sans', helvetica, sans;
+	font-weight: 200;
 	box-shadow: 0 0 3em -1em black;
 	font-size: 24px;
 
 	h1 {
 		whitespace: nowrap;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-size: 120%;
+		font-weight: 300;
 	}
 
 	.slide-content {

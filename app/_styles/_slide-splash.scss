@@ -1,4 +1,13 @@
 .slide[data-slide-id="/slide-splash"] .panel.slide-content {
+
+	font-size: 1.5em;
+
 	background: url('../images/blue-orange-yellow.jpg');
 	background-size: cover;
+	color: white;
+
+	h1, h2, h3, h4, h5, h6 {
+		font-size: 1.5em;
+		font-weight: bold;
+	}
 }

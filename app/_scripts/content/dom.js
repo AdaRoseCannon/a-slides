@@ -30,8 +30,7 @@ module.exports = {
 		var pre = document.createElement('pre');
 		appendTarget.empty().appendChild(pre);
 		t = setInterval(() => {
-			pre.append(i++ % 2 === 1 ? 'myVar = el.clientHeight;' : 'el.height = (myVar + 1) + "px"');
-			pre.append('\n');
+			pre.addHTML(i++ % 2 === 1 ? 'myVar = el.clientHeight;' : 'el.height = (myVar + 1) + "px"\n');
 		}, 800);
 		yield;
 
@@ -39,8 +38,7 @@ module.exports = {
 		clearInterval(t);
 		pre.innerHTML = '';
 		t = setInterval(() => {
-			pre.append('myDomEl.innerHTML += "I know a song which\'ll get on your nerves...";');
-			pre.append('\n');
+			pre.addHTML('myDomEl.innerHTML += "I know a song which\'ll get on your nerves...";\n');
 		}, 800);
 		yield;
 

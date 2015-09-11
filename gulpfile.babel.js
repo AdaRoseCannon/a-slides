@@ -9,7 +9,16 @@ import babelify from 'babelify';
 import exit from 'gulp-exit';
 
 const $ = gulpLoadPlugins();
+
 const reload = browserSync.reload;
+
+let t;
+const reload2 = function (...a) {
+	if (t) t = setTimeout(() => {
+		reloadOrig.apply(this, a);
+		t = false;
+	}, 1000);
+};
 
 gulp.task('styles', () => {
 	return gulp.src('app/_styles/*.scss')
@@ -184,7 +193,7 @@ gulp.task('serve', ['html', 'scripts', 'images', 'fonts'], () => {
 		'app/images/**/*',
 		'.tmp/fonts/**/*',
 		'.tmp/scripts/**/*.js'
-	]).on('change', reload);
+	]).on('change', reload2.bind(this));
 
 
 	gulp.watch('app/**/*.{md,html}', ['html']);
