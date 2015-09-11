@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<title>Long Form Notes</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+			<div class="slide" data-slide-id="">
+				<div class="marked" style="padding:2em; overflow: auto; height: 100%;">
+
+# Animation Performance
+
+This talk covers rendering and animation performance. Both in the DOM and also general 2D and 3D animation in the web.
+
+The ideal feeling is that of a native experience. The user shouldn't feel their very expensive device is struggling to display a simple a web page. To achieve this we have a goal framerate of 60fps, which gives us 16ms to render a single frame.
+
+When the frame takes longer to layout and render than 16ms that is jank. It looks like a stuttery discontinuity in the animation, it which feels bad.
+
+A long frame is caused by too much blocking activity in the main thread this can be most simply a long main thread loop in javascript or blocking io (e.g. synchronous ajax requests or very large local storage transactions).
+
+However most commonly on a typical webpage it is caused by the layouts and paints used to render the page.
+
+---------
+
+🐢 Layout is slowest. Layout is where the browser calculates the positions and sizes of all the elements in the page. Making a small DOM change could potentially invalidate the entire DOM tree causing it to be recalculated.
+
+An invalidated DOM is recalculated whenever a layout property is read as well as when each frame is rendered. This means layout could need to be recalculated many times in a single frame.
+
+If an element's layout needs to be recalculated it also has its bitmap in memory invalidated, so it needs to be repainted.
+
+🐢 Paint is medium-slow. This is where the layer's bitmap has been invalidated and needs to be redrawn and stored in memory. Aside from when its layout changes this will also happen when its appearance changes, such as background, font or color.
+
+🐰 Composite is very fast. Composite only involves the graphics card rerendering from bitmaps calculated in paint and stored in memory: it is performed when the page is being drawn to the screen. It is triggered by gfx card-only operations such as transform, clipping and opacity.
+
+---------
+
+<a href="http://csstriggers.com/" target="_blank">CSS triggers</a> is a great resource for discovering how properties trigger each of these operations.
+
+Writing to DOM is free; you can write as much as you want.
+
+Once the DOM is read if it has been invalidated by being written to the layout needs to be recalculated, which is expensive.
+
+One common problem is reading, then writing in a loop, which is known as layout thrashing; the layout is invalidated and recalculated on every single read.
+Interleaving reads and writes could mean multiple expensive layout operations per frame.
+
+One fix for DOM thrashing tends to be fairly simple: batch your reads and writes all together. Especially don't change a property then immediately read it.
+
+For example don't append to `innerhtml` in a loop INSTEAD build up a string and then write that string to the `innerhtml`.
+
+In an mvc or a large framework with many independent modules it can be difficult to ensure modules do not interleave read and writes. Wilson Page's <a href="https://github.com/wilsonpage/fastdom" target="_blank">fastdom library</a> can help with this so that reads and writes in a single frame all get done together.
+
+Often a lot of performance can be gained by measuring how an elements appearance will change after applying a function then applying it in a single step.
+One can then sometimes animate the difference using properties which only trigger compositing to gain a smooth transition.
+
+Animating properties which cause affect layout will trigger a relayout on every frame. For example this awful scene here: [slide]
+
+Although it doesn't look like much (and is probably rendering pretty smooth) it is making my fan spin up and get's my phone really hot. With more content or images this would be evident as Jank.
+
+In this example I am animating the 'width' property of the DOM element. This is one of the properties which triggers layout. It is being changed and so requires a re-layout every single frame by the css animation.
+
+***A good general motto is to calculate all DOM changes first then apply them in a single step.***
+
+# But why is layout so hard on the browser?
+Layout is very hard to calculate because changing a single element could have an effect on every single other element on the page. This also invalidates the bitmap of the element in memory so it has to be repainted.
+
+Another reason is the rendering of typefaces. Type is so ubiquitous about the web it is very easily to take it for granted but it is very difficult to render especially when you appreciate that every character needs to be kerned and hinted, every word and paragraph needs to be placed and flowed correctly.
+
+## How come compositing is so fast then?
+Rotating or scaling is all done off the main thread on your phone/desktop's graphics chip. Also graphics cards are very good at applying transforms. The transforms on a single webpage are nothing compared to a modern computer game.
+
+# Layout Boundaries and Containment
+
+Even though this modal looks isolated, the browser may still relayout the whole Dom as it's content changes.
+However, we can seperate its layout invalidation from the rest of the page.
+Doing so doesn't accelerate the animation, but it does make the layout change less catastophic.
+
+There is a draft css spec called <a href="http://dev.w3.org/csswg/css-containment/" target="_blank">containment</a> which provides a hint to the browser that this element will not affect the rest of the DOM tree.
+
+The containment spec requires certain properties, such as no scrolling and fixed dimensions.
+
+<div class="highlight"><pre><code class="css"><span class="p">{</span>
+    <span class="k">height</span><span class="o">:</span> <span class="o">&lt;</span><span class="k">fixed</span> <span class="n">value</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">width</span><span class="o">:</span> <span class="o">&lt;</span><span class="k">fixed</span> <span class="n">value</span> <span class="n">or</span> <span class="n">a</span> <span class="o">%&gt;</span><span class="p">;</span>
+    <span class="k">overflow</span><span class="o">:</span> <span class="k">hidden</span><span class="p">;</span>
+    <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+    <span class="n">contain</span><span class="o">:</span> <span class="n">strict</span><span class="p">;</span> <span class="o">//</span> <span class="n">In</span> <span class="n">draft</span>
+<span class="p">}</span>
+</code></pre></div>
+
+Containment can be done in browsers currently, but it relies on undocumented browser behaviour requiring the element to have certain properties before it can be optimised, such as a fixed height and no scroll and is dependent upon the browser's implementation.
+
+The containment property would be really good because it makes explicit as a performance enhancement what was previously a full set of properties. The performance gains from these could not be relied upon in every browser and using styling hacks for performance feels messy.
+
+Containment will enforce the styling neccessary for the isolation. Which means it could potentially collapse down a box without a height and width set (either to 300px x 150px or to 0 x 0). It will clip all content outside of itself.
+
+Layout Containment is _not_ style containment as defined in the web components spec.  Style containment stops custom elements styling affecting other elements; layout containment is a css property in draft to aid performance by allowing the browser to isolate certain elements from the rest of the DOM's layout tree.
+
+# Removing work from the main thread.
+
+The Web for many years was been single threaded but web workers allow us to offload some work into additional threads so we can leave the main thread to focus on performing the rendering operations.
+
+JSON parsing is one thing which can be quite slow. We can use web workers (or the Service Worker) to perform our ajax requests and parse the JSON off of the main thread. We can then query bits of the JSON through the postMessage or MessageChannel apis.
+
+We can also use workers to do complex calculations which do not rely on interacting with the DOM. If your website's winter holiday theme has realtime physically correct snowfall then perhaps perform these calculations in a worker and transfer the positions/rotations back to the main thread for rendering.
+
+Something a bit less frivolous is to use a compression library to expand data recieved in an ajax request. Which can then be processed in a worker and queried from the main thread.
+
+But beware, there is a hidden cost of using workers. Transferring the data back to the main thread is not free. It needs to be deserialised in the main thread. So if you download a JSON file and parse it in a worker then send the whole object back to the main thread you gain NOTHING. The main thread still has to deserialize back into a JavaScript object.
+
+So make sure you only send what you need for rendering back to the main thread.
+
+# Message Channel API
+
+The MessageChannel API which recently gained support across all platforms. Allows us to create a nice pattern for sending messages to workers and waiting on a promise for the response.
+
+My slides will be online later,
+
+This is the important bit, the API is very nice and can be used to simply assign tasks to the worker with a nice async interface.
+
+# Synchronous IO operations
+
+Of the older webapis which are synchronous ***LocalStorage*** is probably the most commonly still used. There are several situations where it can be slow:
+
+http://www.stevesouders.com/blog/2014/02/11/measuring-localstorage-performance/
+
+Although my recent tests in Cr45 for mobile and desktop show that performance is about 1/3 of writing to memory. It still may be best to use an async storage method such as IndexedDB.
+
+# Trading precaching for performance
+
+On the a page's first load it is pretty common practise to cache a whole bunch of assets for later use.
+
+Front loading your content like this can be great for later loading performance but parsing JS and decoding images can also quite expensive.
+
+This added stress can make your site's first few moments be really janky or even unresponsive, as the user can neither click nor scroll. You might as well have just sent down a pretty picture of your above the fold content.
+
+When the page looks like it is ready to be used it should also be readily responding to a users interactions.
+
+Especially if you have an interstitial, I can't think of a faster way to make a user bounce than to hide the content with a box which cannot neither be closed or scrolled past because the rest of the site is still loading.
+
+If there is need to query some large JSON to view your site but not all the data is needed right there and then. Aside from parsing it off thread as mentioned earlier one can just break up the JSON to so that it can be queried from the server in smaller API reqests a bit later into your pages life, http2 speeds this up nicely.
+
+Don't try to eat an elephant in a single mouthful.
+
+If you are using a Service Worker you are probably already doing precaching off thread using the cache API so good on you.
+
+On our Six Degrees of Angela Merkel Four oh Four page project I downloaded 20s worth of precalculated data for our animation (300k) and then started buffering the rest of the animation data from the api. This allowed the animation to start quickly and never have to process a giant JSON file.
+
+You can compromise though, the times when the site needs to be most responsive is when animation is happening e.g. the user is touching, dragging, swiping or scrolling. But there are a few situations where you can be slow without the user noticing for example just after a click it takes about 100ms unresponsiveness for the site to start to feel slow. Which is loads of time to perform a large calculation such as measuring and relaying out the DOM a couple of times for an upcoming animation.
+
+If you are careful and nothing is being animated for example the user is reading an article take this time to deserialise a json object or precache the user's potential actions.
+
+***Tweak 6doam to remove 404 sign for to get the nice buffering***
+
+# WebGL Shaders
+
+In WebGL inorder to produce special effects really performantly shaders can be used. Shaders are scripts which get compiled when instantiated (this can be slow) but they can process huge amounts of data very quickly on your computers graphics card. This has the advantage of being off the main thread and being run on your computers graphics hardware. Graphics cards are very powerful and specialise in vector maths can process huge amounts of data very quickly.
+
+If working with WebGL and are animating a fixed topology e.g. Waves, 3D graphs, fixed geometry models. Do the vertex transforms in the vertex shader rather than updating the geometry on the cpu, you will get much better performance.
+
+In this demo I set the sound data from the microphone as the 'uniforms' constants in the vertex shader. The vertex shader then processes this data to work out how it should effect each vertex. There are over 4000 vertices and it does not struggle even on a lower end phone.
+
+***Change slide***
+
+In my early prototype I used the cpu for this and it got very hot and since this was a google cardboard demo I though it was important to not ignite the cardboard headset.
+That's not the kind of face meltingly awesome VR one should strive for.
+
+## Super crazy (don't do this),
+
+If you would like to process HUGE datasets with a complex operation one can code a complex operation into a shader. Then the data can be entered in via the uniforms much like I did with the bunny demo. But instead of rendering an awesome demo. One can draw the values out as pixels in the frame buffer. This can be queried and turned back into numbers. Allowing you to use the power of your graphics card for data processing. Kind of like NVIDIA CUDA.
+
+## SIMD
+
+On the more realistic side of things one will be able to perform paralell maths using vectors when the SIMD API is implemented.
+SIMD is an upcoming JavaScript API. It will allow one to perform simultaeneous calculations by mapping four numbers as dimensions of a 4 vector and do 4 operations at once. It is still on the cpu but should be able to process a large dataset a factor of 4 faster.
+
+It can be used now in firefox nightly and wrapped webapps by shipping with chrome which has SIMD compiled in. I believe Intel XDK can do this for you.
+
+# (SKIP) When rendering animations (2D or 3D)
+
+* Avoid rendering what is off screen, set your draw distance to something reasonable.
+* Calculate physics as you need it. Don't run physics where the user won't notice it.
+* * Once your physics system has come to rest see if you can turn it off
+* * Even if you are running physics in a worker don't want to overheat the phone.
+* Transform UV maps to get a very cheap animation.
+
+# Conclusion, Make it feel fast,
+
+* Make sure scrolling/dragging is responsive
+* Make it behave from the moment the page is loaded.
+* Manage user expectations, don't show what they cannot interact with
+* Measure everything first then render second
+* Move as much as possible out of the main thread, into workers or onto the graphics card.
+* * but beware of serialization costs of transferring data between threads.
+
+# References
+* <a href="http://dev.w3.org/csswg/css-containment/" target="_blank">Containment Spec</a>
+* <a href="https://github.com/wilsonpage/fastdom" target="_blank">Fastdom - Library to avoid read/write loop</a>
+* <a href="http://csstriggers.com/" target="_blank">CSS Triggers</a>
+* <a href="https://css-tricks.com/things-chrome-dev-summit-2014/" target="_blank">Great Paul Lewis talk</a>
+* <a href="http://lanyrd.com/2015/extwebsummit/" target="_blank">2015 Extensible Web Summit.</a>
+* <a href="http://www.stevesouders.com/blog/2014/02/11/measuring-localstorage-performance/" target="_blank">Steve Souders on measuring lcoal storage speed.</a>
+
+</div>
+
+			</div>
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+	<script src="scripts/main.js"></script>
+	</body>
+</html>

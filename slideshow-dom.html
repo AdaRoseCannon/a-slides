@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<title>Dom</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+			<div class="slide" data-slide-id="">
+				<div class="panel slide-content">
+<div class="panel-body flex">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<p>Writing to layout properties is free; you can write as much as you want.</p>
+
+<p>It&#39;ll only be recalculated on render or when one of its layout properties is read. (scaleHeight)</p>
+
+<p>One common problem is reading, then writing in a loop, which is known as layout thrashing;</p>
+
+<p>The layout is invalidated and recalculated on every single read.</p>
+
+<p>Interleaving reads and writes could mean multiple expensive layout operations per frame.</p>
+
+<p>One fix for DOM thrashing tends to be fairly simple: batch your reads and writes all together. Especially don&#39;t change a property then immediately read it.</p>
+
+<p>For example don&#39;t append to <code>innerhtml</code> in a loop INSTEAD build up a string and then write that string to the <code>innerhtml</code>.</p>
+
+<p>In an mvc or a large framework with many independent modules it can be difficult to ensure modules do not interleave read and writes. Wilson Page&#39;s <a href="https://github.com/wilsonpage/fastdom" target="_blank">fastdom library</a> can help with this so that reads and writes in a single frame all get done together.</p>
+
+<p>It does this by allowing you to add your read and write callback functions to seperate queues these queues are flushed once per frame. So that it performs all the reads then all of the writes.</p>
+
+<p>Thus giving you an async api to turn interleaved read and writes into queue of layout reads then layout writes.</p>
+
+<hr>
+
+<p>Sometimes one wants to animate an element growing or sliding in.</p>
+
+<p>Naively one might put a transition on an elements height or left css properties.</p>
+
+<p>Animating properties like these which effect layout will trigger a relayout on every frame.</p>
+
+<p>For example this awful scene here: [slide]</p>
+
+<p>Although it doesn&#39;t look like much (and is probably rendering pretty smooth) it is making my fan spin up and get&#39;s my phone really hot. With more content or images this would be evident as Jank.</p>
+
+<p>In this particular example I am animating the &#39;width&#39; property of only a few elements. This is one of the properties which triggers layout. It is being changed and so requires a re-layout every single frame by the css animation.</p>
+
+<p><strong><em>A good general motto is to calculate all DOM changes first then apply them in a single step.</em></strong></p>
+
+<h1>But why is layout so hard on the browser?</h1>
+
+<p>Changing a single element could have an effect on every single other element on the page.</p>
+
+<p>Every touched element also to be repainted.</p>
+
+<p><strong><em>Typeface slide</em></strong></p>
+
+<p>Another reason is the rendering of typefaces. Type is so ubiquitous about the web it is very easily to take it for granted but it is very difficult to render especially when you appreciate that every character needs to be kerned and hinted, every word and paragraph needs to be placed and flowed correctly.</p>
+
+<p><strong><em>Composite slide</em></strong></p>
+
+<p>Compositing is great.
+Transforms such as Rotating or scaling are all done off the main thread.</p>
+
+<p>They are performed on your phone/desktop&#39;s graphics chip.</p>
+
+<p>Graphics chips are very good at applying transforms.</p>
+
+<p>The transforms on a single webpage are nothing compared to a modern computer game.</p>
+
+<p></div>
+</div></p>
+
+			</div>
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+	<script src="scripts/main.js"></script>
+	</body>
+</html>

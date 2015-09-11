@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<title>Containment</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+			<div class="slide" data-slide-id="">
+				<div class="panel slide-content">
+<div class="panel-body marked">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>Layout Boundaries and Containment</h1>
+
+<p>Even though this modal looks isolated...
+the browser may still relayout the whole Dom as it&#39;s content changes.</p>
+
+<p>However, we can seperate its layout invalidation from the rest of the page.
+Doing so doesn&#39;t accelerate the animation, but it does make the layout change less catastophic.</p>
+
+<p>There is a draft css spec called <a href="http://dev.w3.org/csswg/css-containment/" target="_blank">containment</a> which provides a hint to the browser that this element will not affect the rest of the DOM tree.</p>
+
+<p>The containment spec requires certain properties, such as no scrolling and fixed dimensions.</p>
+
+<div class="highlight"><pre><code class="css"><span class="p">{</span>
+    <span class="k">height</span><span class="o">:</span> <span class="o">&lt;</span><span class="k">fixed</span> <span class="n">value</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">width</span><span class="o">:</span> <span class="o">&lt;</span><span class="k">fixed</span> <span class="n">value</span> <span class="n">or</span> <span class="n">a</span> <span class="o">%&gt;</span><span class="p">;</span>
+    <span class="k">overflow</span><span class="o">:</span> <span class="k">hidden</span><span class="p">;</span>
+    <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+    <span class="n">contain</span><span class="o">:</span> <span class="n">strict</span><span class="p">;</span> <span class="o">//</span> <span class="n">In</span> <span class="n">draft</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+Containment can be done in browsers currently.
+But it relies on undocumented browser behaviour.
+It requires the element to have certain properties before it can be optimised,
+
+* position absolute
+* fixed height
+* no scroll 
+
+and is entirely dependent upon the browser's implementation.
+
+The containment property would be really good because it makes explicit as a performance enhancement  
+what was previously only doable by setting a variety of properties.
+
+The performance gains from these could not be relied upon in every browser and using styling hacks for performance feels messy.
+
+Containment will enforce certain styling neccessary for the isolation. Which means it could potentially cause an element to be styled differently to how the user expects. E.g. no scrolling.
+
+Layout Containment is _not_ the same as style containment as defined in the web components spec.
+* Style containment stops custom elements styling affecting other elements;
+
+layout containment is a css property in draft.
+It is to aid performance by allowing the browser to isolate certain elements from the rest of the DOM's layout tree.
+</div>
+
+<p></div></p>
+
+			</div>
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+	<script src="scripts/main.js"></script>
+	</body>
+</html>

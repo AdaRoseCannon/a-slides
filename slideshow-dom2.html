@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<title>Dom2</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+			<div class="slide" data-slide-id="">
+				<div class="panel slide-content">
+<div class="panel-body">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked">
+* Let&#39;s say we have an app like so
+* and we want to animate prepending an element to the start,
+* here we have an issue because as you can see height changes which pushes many elements around the page because of this change,
+* so it&#39;s expensive because it&#39;s a layout operation and much worse because the whole page will change
+* but following on from earlier before we insert the new notification we can measure how everything will change
+* then animate the change.
+* when doing something like this it is best to front load all of the dom read/writes so the app is responsive as the animation finishes.
+* if it is a dom change on a button click then you have about a whole 100ms to measure and write to the DOM before it feels sluggish.
+* (? perhaps also take this time to perform a prefetch)
+* this method follows up from a great talk given by paul lewis at the chrome dev summit</p>
+
+<hr>
+
+<p>Follow it through in detail
+* Measure everything we want to measure.
+* store the current animation so it can be restored later set it to ‘0s’
+* store the current transform so it can be restored later
+* Perform the function
+* Measure the new positions, sizes,
+* Anything which has changed size: scale it and all give all of its children the inverse transform.
+* * Give all the children the offset of the top left of the parent
+* * Give them the inverse scale
+* apply the translations to move everything to its new place
+* apply the new transition to everything affected
+* set all of the transforms to their original values
+* watch everything smoothly animate.
+* on transitionend
+* * restore the transitions
+* * fire any callbacks</p>
+
+<p></div>
+</div></p>
+
+			</div>
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+	<script src="scripts/main.js"></script>
+	</body>
+</html>

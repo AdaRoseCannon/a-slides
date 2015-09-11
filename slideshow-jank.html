@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<title>Jank</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+			<div class="slide" data-slide-id="">
+				<div class="panel slide-content">
+<div class="panel-body">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<p>The user shouldn&#39;t feel their very expensive device is struggling to display a simple a web page.</p>
+
+<p>Goal framerate of 60fps, which gives us 16ms to render a single frame.</p>
+
+<p>When the frame takes longer to layout and render than 16ms that is jank.</p>
+
+<p>It looks like a stuttery discontinuity in the animation.</p>
+
+<p>Jank shows up in the timeline as very tall bars</p>
+
+<p>It&#39;s been shown that 60fps with occasional hiccoups feels much slower than a continuous 30fps.</p>
+
+<p>Long frames caused by too much blocking activity in the main thread.</p>
+
+<p>Can be an intense cpu bound operation or blocking IO (localstorage, sync ajax)</p>
+
+<p>However most commonly on a typical webpage slowness is caused by the layouts and paints used to render the page.</p>
+
+<p>A very simple view of the render pipeline is.</p>
+
+<ul>
+<li>Measure Element&#39;s position and size in the <em>Layout</em> step.</li>
+<li>Certain elements are rendered into bitmaps in memory in the <em>paint</em> step</li>
+<li>The graphics card then draws these bitmaps to the screen in the <em>composite</em> step</li>
+</ul>
+
+<p>🐢 Layout is slowest.</p>
+
+<ul>
+<li>Layout - browser calculates the positions and sizes of all the elements in the page.</li>
+<li>Making a small DOM change could potentially invalidate the entire DOM tree</li>
+<li>An invalidated DOM is recalculated when each frame is rendered. </li>
+<li>it is also recalculated whenver layout properties are read</li>
+<li>So layout may be recalculated many times in a single frame.</li>
+</ul>
+
+<p>🐢 An element needs to be repainted when it&#39;s appearance changes such as font-family or background colour.
+If an element&#39;s layout changes its also needs to be repainted.</p>
+
+<p>🐰 Composite is very fast. Composite only involves the graphics card rerendering from bitmaps calculated in paint and stored in memory: it is performed when the page is being drawn to the screen. It is triggered by gfx card-only operations such as transform, clipping and opacity. </p>
+
+<p><a href="http://csstriggers.com/" target="_blank">CSS triggers</a> is a great resource for discovering how properties trigger each of these operations.</p>
+
+<p>One should try to touch layout properties rarely but can be pretty free with animating compositing properties.</p>
+
+<p></div>
+</div></p>
+
+			</div>
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+	<script src="scripts/main.js"></script>
+	</body>
+</html>

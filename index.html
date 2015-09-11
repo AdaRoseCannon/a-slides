@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<title>Perf Slideshow</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+
+<div class="slide" data-slide-id="/slide-splash"><div class="panel slide-content">
+<div class="panel-body marked">
+# Render Performance and Animation
+## Smoooooooth
+<div class="author-card">
+Ada Rose Edwards - @lady_ada_king<br />
+FT Labs
+</div>
+
+<p></div>
+</div>
+<div class="panel notes">
+<div class="panel-heading">Notes</div>
+<div class="panel-body marked">
+* Hi, I&#39;m Ada Rose from FTLabs</p>
+
+<p>Aim to cover rendering and animation performance.</p>
+
+<p>Both in the DOM and also general 2D and 3D animation in the web.</p>
+
+<p>The ideal feeling is that of a native experience.</p>
+
+<p>The goal of performance is so that the user doesn&#39;t notice the web page.</p>
+
+<ul>
+<li>Make sure user interactions such as scrolling/dragging is responsive</li>
+<li>From the moment the content is visible</li>
+<li>Manage user expectations, don&#39;t show what they cannot interact with</li>
+<li>Usually this means taking time to calculate an animation before rendering it</li>
+<li>If you can move as much as possible out of the main thread, into workers or onto the graphics card.</li>
+</ul>
+
+<p>I&#39;ll begin with rendering the DOM then move onto some practises which help for animated visuals.</p>
+
+<p></div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/jank"><div class="panel slide-content">
+<div class="panel-body">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<p>The user shouldn&#39;t feel their very expensive device is struggling to display a simple a web page.</p>
+
+<p>Goal framerate of 60fps, which gives us 16ms to render a single frame.</p>
+
+<p>When the frame takes longer to layout and render than 16ms that is jank.</p>
+
+<p>It looks like a stuttery discontinuity in the animation.</p>
+
+<p>Jank shows up in the timeline as very tall bars</p>
+
+<p>It&#39;s been shown that 60fps with occasional hiccoups feels much slower than a continuous 30fps.</p>
+
+<p>Long frames caused by too much blocking activity in the main thread.</p>
+
+<p>Can be an intense cpu bound operation or blocking IO (localstorage, sync ajax)</p>
+
+<p>However most commonly on a typical webpage slowness is caused by the layouts and paints used to render the page.</p>
+
+<p>A very simple view of the render pipeline is.</p>
+
+<ul>
+<li>Measure Element&#39;s position and size in the <em>Layout</em> step.</li>
+<li>Certain elements are rendered into bitmaps in memory in the <em>paint</em> step</li>
+<li>The graphics card then draws these bitmaps to the screen in the <em>composite</em> step</li>
+</ul>
+
+<p>🐢 Layout is slowest.</p>
+
+<ul>
+<li>Layout - browser calculates the positions and sizes of all the elements in the page.</li>
+<li>Making a small DOM change could potentially invalidate the entire DOM tree</li>
+<li>An invalidated DOM is recalculated when each frame is rendered. </li>
+<li>it is also recalculated whenver layout properties are read</li>
+<li>So layout may be recalculated many times in a single frame.</li>
+</ul>
+
+<p>🐢 An element needs to be repainted when it&#39;s appearance changes such as font-family or background colour.
+If an element&#39;s layout changes its also needs to be repainted.</p>
+
+<p>🐰 Composite is very fast. Composite only involves the graphics card rerendering from bitmaps calculated in paint and stored in memory: it is performed when the page is being drawn to the screen. It is triggered by gfx card-only operations such as transform, clipping and opacity. </p>
+
+<p><a href="http://csstriggers.com/" target="_blank">CSS triggers</a> is a great resource for discovering how properties trigger each of these operations.</p>
+
+<p>One should try to touch layout properties rarely but can be pretty free with animating compositing properties.</p>
+
+<p></div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/dom"><div class="panel slide-content">
+<div class="panel-body flex">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<p>Writing to layout properties is free; you can write as much as you want.</p>
+
+<p>It&#39;ll only be recalculated on render or when one of its layout properties is read. (scaleHeight)</p>
+
+<p>One common problem is reading, then writing in a loop, which is known as layout thrashing;</p>
+
+<p>The layout is invalidated and recalculated on every single read.</p>
+
+<p>Interleaving reads and writes could mean multiple expensive layout operations per frame.</p>
+
+<p>One fix for DOM thrashing tends to be fairly simple: batch your reads and writes all together. Especially don&#39;t change a property then immediately read it.</p>
+
+<p>For example don&#39;t append to <code>innerhtml</code> in a loop INSTEAD build up a string and then write that string to the <code>innerhtml</code>.</p>
+
+<p>In an mvc or a large framework with many independent modules it can be difficult to ensure modules do not interleave read and writes. Wilson Page&#39;s <a href="https://github.com/wilsonpage/fastdom" target="_blank">fastdom library</a> can help with this so that reads and writes in a single frame all get done together.</p>
+
+<p>It does this by allowing you to add your read and write callback functions to seperate queues these queues are flushed once per frame. So that it performs all the reads then all of the writes.</p>
+
+<p>Thus giving you an async api to turn interleaved read and writes into queue of layout reads then layout writes.</p>
+
+<hr>
+
+<p>Sometimes one wants to animate an element growing or sliding in.</p>
+
+<p>Naively one might put a transition on an elements height or left css properties.</p>
+
+<p>Animating properties like these which effect layout will trigger a relayout on every frame.</p>
+
+<p>For example this awful scene here: [slide]</p>
+
+<p>Although it doesn&#39;t look like much (and is probably rendering pretty smooth) it is making my fan spin up and get&#39;s my phone really hot. With more content or images this would be evident as Jank.</p>
+
+<p>In this particular example I am animating the &#39;width&#39; property of only a few elements. This is one of the properties which triggers layout. It is being changed and so requires a re-layout every single frame by the css animation.</p>
+
+<p><strong><em>A good general motto is to calculate all DOM changes first then apply them in a single step.</em></strong></p>
+
+<h1>But why is layout so hard on the browser?</h1>
+
+<p>Changing a single element could have an effect on every single other element on the page.</p>
+
+<p>Every touched element also to be repainted.</p>
+
+<p><strong><em>Typeface slide</em></strong></p>
+
+<p>Another reason is the rendering of typefaces. Type is so ubiquitous about the web it is very easily to take it for granted but it is very difficult to render especially when you appreciate that every character needs to be kerned and hinted, every word and paragraph needs to be placed and flowed correctly.</p>
+
+<p><strong><em>Composite slide</em></strong></p>
+
+<p>Compositing is great.
+Transforms such as Rotating or scaling are all done off the main thread.</p>
+
+<p>They are performed on your phone/desktop&#39;s graphics chip.</p>
+
+<p>Graphics chips are very good at applying transforms.</p>
+
+<p>The transforms on a single webpage are nothing compared to a modern computer game.</p>
+
+<p></div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/containment"><div class="panel slide-content">
+<div class="panel-body marked">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>Layout Boundaries and Containment</h1>
+
+<p>Even though this modal looks isolated...
+the browser may still relayout the whole Dom as it&#39;s content changes.</p>
+
+<p>However, we can seperate its layout invalidation from the rest of the page.
+Doing so doesn&#39;t accelerate the animation, but it does make the layout change less catastophic.</p>
+
+<p>There is a draft css spec called <a href="http://dev.w3.org/csswg/css-containment/" target="_blank">containment</a> which provides a hint to the browser that this element will not affect the rest of the DOM tree.</p>
+
+<p>The containment spec requires certain properties, such as no scrolling and fixed dimensions.</p>
+
+<div class="highlight"><pre><code class="css"><span class="p">{</span>
+    <span class="k">height</span><span class="o">:</span> <span class="o">&lt;</span><span class="k">fixed</span> <span class="n">value</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">width</span><span class="o">:</span> <span class="o">&lt;</span><span class="k">fixed</span> <span class="n">value</span> <span class="n">or</span> <span class="n">a</span> <span class="o">%&gt;</span><span class="p">;</span>
+    <span class="k">overflow</span><span class="o">:</span> <span class="k">hidden</span><span class="p">;</span>
+    <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+    <span class="n">contain</span><span class="o">:</span> <span class="n">strict</span><span class="p">;</span> <span class="o">//</span> <span class="n">In</span> <span class="n">draft</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+Containment can be done in browsers currently.
+But it relies on undocumented browser behaviour.
+It requires the element to have certain properties before it can be optimised,
+
+* position absolute
+* fixed height
+* no scroll 
+
+and is entirely dependent upon the browser's implementation.
+
+The containment property would be really good because it makes explicit as a performance enhancement  
+what was previously only doable by setting a variety of properties.
+
+The performance gains from these could not be relied upon in every browser and using styling hacks for performance feels messy.
+
+Containment will enforce certain styling neccessary for the isolation. Which means it could potentially cause an element to be styled differently to how the user expects. E.g. no scrolling.
+
+Layout Containment is _not_ the same as style containment as defined in the web components spec.
+* Style containment stops custom elements styling affecting other elements;
+
+layout containment is a css property in draft.
+It is to aid performance by allowing the browser to isolate certain elements from the rest of the DOM's layout tree.
+</div>
+
+<p></div></p>
+</div>
+
+<div class="slide" data-slide-id="/threads"><div class="panel slide-content">
+<div class="panel-body flex" style="align-items: center;">
+<h1>The internet has threads</h1>
+<img src="images/threads.jpg" />
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>Removing work from the main thread.</h1>
+
+<p>The Web for many years was single threaded.
+Now we have web workers they allow us to offload some work into additional threads on the cpu.
+So we can leave the main thread to focus on performing the rendering operations.</p>
+
+<ul>
+<li>JSON parzing is slow.</li>
+<li>We can use web workers (or the Service Worker) to perform our ajax requests and parze the JSON off of the main thread.</li>
+<li>We can then query bits of the JSON through the postMessage or MessageChannel apis.</li>
+</ul>
+
+<p>We can also use workers to do complex calculations which do not rely on interacting with the DOM.</p>
+
+<p>Compression library to expand data recieved in an ajax request. This data can then be processed in the worker and queried from the main thread.</p>
+
+<p>On the lighter side; If your website&#39;s winter holiday theme has realtime physically correct snowfall then perhaps perform these calculations in a worker and transfer the positions/rotations of each snowflake back to the main thread for rendering.</p>
+
+<p>But beware, there is a hidden cost of using workers. Transferring the data back to the main thread is not free. It needs to be deserialised in the main thread. So if you download a JSON file and parze it in a worker then send the whole object back to the main thread you gain NOTHING. The main thread still has to deserialize back into a JavaScript object.</p>
+
+<p>So make sure you only send what you need for rendering back to the main thread.</p>
+
+<p></div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/worker"><div class="panel slide-content">
+<div class="panel-body marked">
+
+## https://googlechrome.github.io/samples/service-worker/post-message/
+<div class="small-text flex">
+
+<div class="highlight"><pre><code class="js"><span class="kd">function</span> <span class="nx">workerMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// This wraps the message posting/response in a promise, which will resolve if the response doesn&#39;t</span>
+    <span class="c1">// contain an error, and reject with the error if it does. If you&#39;d prefer, it&#39;s possible to call</span>
+    <span class="c1">// controller.postMessage() and set up the onmessage handler independently of a promise, but this is</span>
+    <span class="c1">// a convenient wrapper.</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kr">const</span> <span class="nx">messageChannel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MessageChannel</span><span class="p">();</span>
+        <span class="nx">messageChannel</span><span class="p">.</span><span class="nx">port1</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">messageChannel</span><span class="p">.</span><span class="nx">port1</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+                <span class="nx">reject</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">error</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">messageChannel</span><span class="p">.</span><span class="nx">port1</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+                <span class="nx">resolve</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+        <span class="c1">// This sends the message data as well as transferring messageChannel.port2 to the service worker.</span>
+        <span class="c1">// The service worker can then use the transferred port to reply via postMessage(), which</span>
+        <span class="c1">// will in turn trigger the onmessage handler on messageChannel.port1.</span>
+        <span class="c1">// See https://html.spec.whatwg.org/multipage/workers.html#dom-worker-postmessage</span>
+        <span class="nx">myWorker</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="p">[</span><span class="nx">messageChannel</span><span class="p">.</span><span class="nx">port2</span><span class="p">]);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">workerMessage</span><span class="p">({</span>
+    <span class="nx">action</span><span class="o">:</span> <span class="s1">&#39;doThing&#39;</span><span class="p">,</span>
+    <span class="nx">myVar</span><span class="o">:</span> <span class="mi">4</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">response</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+
+
+
+<div class="highlight"><pre><code class="js"><span class="c1">// Recieve messages from the client and reply back onthe same port</span>
+<span class="nx">self</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+            <span class="k">switch</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">case</span> <span class="s1">&#39;doThing&#39;</span><span class="o">:</span>
+                    <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="nx">expensiveThing</span><span class="p">();</span>
+
+                <span class="k">default</span><span class="o">:</span>
+                    <span class="k">throw</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Invalid Action&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">success</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+            <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">success</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span> <span class="o">?</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span> <span class="o">:</span> <span class="nx">err</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">event</span><span class="p">.</span><span class="nx">ports</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+
+</div>
+
+<p></div>
+</div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>Message Channel API</h1>
+
+<p>Interfacing with workers is usually quite a bellyache with the postMessage API.</p>
+
+<p>The MessageChannel API which recently gained support across all platforms. Allows us to create a nice pattern for sending messages to workers.</p>
+
+<p>This is the important bit, the interface once can make is very simple and promise based much like the fetch API. Greatly increasing the ease of working with workers.
+</div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/localstorage"><div class="panel slide-content">
+<div class="panel-body marked">
+LocalStorage is not actually that bad, but some platforms may slowdown when it is full.
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<p>Of the older webapis which are synchronous <strong><em>LocalStorage</em></strong> is probably the most commonly still used. There are several situations where it can be slow:</p>
+
+<p>http://www.stevesouders.com/blog/2014/02/11/measuring-localstorage-performance/</p>
+
+<p>Although my recent tests in Cr45 for mobile and desktop show that performance is about 1/3 of writing to memory. It still may be best to use an async storage method such as IndexedDB.</p>
+
+<p></div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/frontloading"><div class="panel slide-content">
+<div class="panel-body">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>Trading precaching for performance</h1>
+
+<p>On the a page&#39;s first load it is pretty common practice to cache a whole bunch of assets for later use.</p>
+
+<p>Front loading your content like this can be great for later loading performance but parsing JS and decoding images can also quite expensive.</p>
+
+<p>This added stress can make your site&#39;s first few moments be really janky or even unresponsive, as the user can neither click nor scroll. You might as well have just sent down a pretty picture of your above the fold content.</p>
+
+<p>When the page looks like it is ready to be used it should also be readily responding to a users interactions.</p>
+
+<p>Especially if you have an interstitial, I can&#39;t think of a faster way to make a user bounce than to hide the content with a box which cannot neither be closed or scrolled past because the rest of the site is still loading.</p>
+
+<p>If there is need to query some large JSON to view your site but not all the data is needed right there and then. Aside from parsing it off thread as mentioned earlier one can just break up the JSON to so that it can be queried from the server in smaller API reqests a bit later into your pages life, http2 speeds this up nicely.</p>
+
+<p>Don&#39;t try to eat an elephant in a single mouthful.</p>
+
+<p>If you are using a Service Worker you are probably already doing precaching off thread using the cache API so good on you.</p>
+
+<p>On our Six Degrees of Angela Merkel Four oh Four page project I start with 20s worth of precalculated data for our animation to get started fast. The remaining 5MB of data was also broken into 20s chunks which could be parzed in a single frame. Instead of marring the animation of the initial landing.</p>
+
+<p>You can compromise on performance though, the times when the site needs to be most responsive is when animation is happening e.g. the user is touching, dragging, swiping or scrolling or when the user is being prompted for input. But there are a few situations where you can be slow without the user noticing for example just after a click or tap interaction it takes about 100ms unresponsiveness for a site to start to feel slow. Which is oodles of time to perform a large calculation such as measuring and relaying out the DOM a couple of times for an upcoming animation.</p>
+
+<p>If you are careful and nothing is being animated for example the user is reading an article take this time to deserialise a json object or precache the user&#39;s potential actions.
+</div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/demos"><div class="panel slide-content">
+<div class="panel-body flex" style="align-items: center;">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>WebGL Shaders</h1>
+
+<p>In WebGL inorder to produce special effects really performantly shaders can be used. Shaders are scripts which get compiled when instantiated (this can be slow) but they can process huge amounts of data very quickly on your computers graphics card. This has the advantage of being off the main thread and being run on your computers graphics hardware. Graphics cards are very powerful and specialise in vector maths can process huge amounts of data very quickly.</p>
+
+<p>If working with WebGL and are animating a fixed topology e.g. Waves, 3D graphs, fixed geometry models. Do the vertex transforms in the vertex shader rather than updating the geometry on the cpu, you will get much better performance.</p>
+
+<p>In this demo I set the sound data from the microphone as the &#39;uniforms&#39; constants in the vertex shader. The vertex shader then processes this data to work out how it should effect each vertex. There are over 4000 vertices and it does not struggle even on a lower end phone.</p>
+
+<p><strong><em>Change slide</em></strong></p>
+
+<p>In my early prototype I used the cpu for this and it got very hot and since this was a google cardboard demo I though it was important to not ignite the cardboard headset.
+That&#39;s not the kind of face meltingly awesome VR one should strive for.</p>
+
+<h2>Super crazy (don&#39;t do this),</h2>
+
+<p>If you would like to process HUGE datasets with a complex operation one can code a complex operation into a shader. Then the data can be entered in via the uniforms much like I did with the bunny demo. But instead of rendering an awesome demo. One can draw the values out as pixels in the frame buffer. This can be queried and turned back into numbers. Allowing you to use the power of your graphics card for data processing. Kind of like NVIDIA CUDA.</p>
+
+<p></div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/simd"><div class="panel slide-content">
+<div class="panel-body flex" style="align-items: center;">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h2>SIMD</h2>
+
+<p>On the more realistic side of things one will be able to perform paralell maths using vectors when the SIMD API is implemented.
+SIMD is an upcoming JavaScript API. It will allow one to perform simultaeneous calculations by mapping four numbers as dimensions of a 4 vector and do 4 operations at once. It is still on the cpu but should be able to process a large dataset a factor of 4 faster.</p>
+
+<p>It can be used now in firefox nightly and wrapped webapps by shipping with chrome which has SIMD compiled in. I believe Intel XDK can do this for you.</p>
+
+<p></div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/conclusion"><div class="panel slide-content">
+<div class="panel-body flex" style="align-items: center;">
+Animated gif of road runner
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>Conclusion, Make it feel fast,</h1>
+
+<ul>
+<li>Make sure scrolling/dragging is responsive</li>
+<li>Make it behave from the moment the page is loaded.</li>
+<li>Manage user expectations, don&#39;t show what they cannot interact with</li>
+<li>Measure everything first then render second</li>
+<li>Move as much as possible out of the main thread, into workers or onto the graphics card.</li>
+<li>* but beware of serialization costs of transferring data between threads.</li>
+</ul>
+
+<p></div>
+</div></p>
+</div>
+
+<div class="slide" data-slide-id="/final"><div class="panel slide-content">
+<div class="panel-body marked">
+# References
+* http://dev.w3.org/csswg/css-containment/ - Containment Spec
+* Fastdom - Library to avoid read/write loop
+* http://csstriggers.com/ - CSS Triggers
+* https://css-tricks.com/things-chrome-dev-summit-2014/ - Great Paul Lewis talk
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SIMD - MDN SIMD
+* https://www.flickr.com/photos/sndrv/16276901852 - Man wearing cardboard
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<p>Any qs?</p>
+
+<p></div>
+</div></p>
+</div>
+
+
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+
+		<script src="scripts/main.js"></script>
+	</body>
+</html>

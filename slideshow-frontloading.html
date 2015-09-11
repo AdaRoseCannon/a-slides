@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<title>Frontloading</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+			<div class="slide" data-slide-id="">
+				<div class="panel slide-content">
+<div class="panel-body">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>Trading precaching for performance</h1>
+
+<p>On the a page&#39;s first load it is pretty common practice to cache a whole bunch of assets for later use.</p>
+
+<p>Front loading your content like this can be great for later loading performance but parsing JS and decoding images can also quite expensive.</p>
+
+<p>This added stress can make your site&#39;s first few moments be really janky or even unresponsive, as the user can neither click nor scroll. You might as well have just sent down a pretty picture of your above the fold content.</p>
+
+<p>When the page looks like it is ready to be used it should also be readily responding to a users interactions.</p>
+
+<p>Especially if you have an interstitial, I can&#39;t think of a faster way to make a user bounce than to hide the content with a box which cannot neither be closed or scrolled past because the rest of the site is still loading.</p>
+
+<p>If there is need to query some large JSON to view your site but not all the data is needed right there and then. Aside from parsing it off thread as mentioned earlier one can just break up the JSON to so that it can be queried from the server in smaller API reqests a bit later into your pages life, http2 speeds this up nicely.</p>
+
+<p>Don&#39;t try to eat an elephant in a single mouthful.</p>
+
+<p>If you are using a Service Worker you are probably already doing precaching off thread using the cache API so good on you.</p>
+
+<p>On our Six Degrees of Angela Merkel Four oh Four page project I start with 20s worth of precalculated data for our animation to get started fast. The remaining 5MB of data was also broken into 20s chunks which could be parzed in a single frame. Instead of marring the animation of the initial landing.</p>
+
+<p>You can compromise on performance though, the times when the site needs to be most responsive is when animation is happening e.g. the user is touching, dragging, swiping or scrolling or when the user is being prompted for input. But there are a few situations where you can be slow without the user noticing for example just after a click or tap interaction it takes about 100ms unresponsiveness for a site to start to feel slow. Which is oodles of time to perform a large calculation such as measuring and relaying out the DOM a couple of times for an upcoming animation.</p>
+
+<p>If you are careful and nothing is being animated for example the user is reading an article take this time to deserialise a json object or precache the user&#39;s potential actions.
+</div>
+</div></p>
+
+			</div>
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+	<script src="scripts/main.js"></script>
+	</body>
+</html>

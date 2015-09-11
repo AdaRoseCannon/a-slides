@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<title>Demos</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+			<div class="slide" data-slide-id="">
+				<div class="panel slide-content">
+<div class="panel-body flex" style="align-items: center;">
+
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>WebGL Shaders</h1>
+
+<p>In WebGL inorder to produce special effects really performantly shaders can be used. Shaders are scripts which get compiled when instantiated (this can be slow) but they can process huge amounts of data very quickly on your computers graphics card. This has the advantage of being off the main thread and being run on your computers graphics hardware. Graphics cards are very powerful and specialise in vector maths can process huge amounts of data very quickly.</p>
+
+<p>If working with WebGL and are animating a fixed topology e.g. Waves, 3D graphs, fixed geometry models. Do the vertex transforms in the vertex shader rather than updating the geometry on the cpu, you will get much better performance.</p>
+
+<p>In this demo I set the sound data from the microphone as the &#39;uniforms&#39; constants in the vertex shader. The vertex shader then processes this data to work out how it should effect each vertex. There are over 4000 vertices and it does not struggle even on a lower end phone.</p>
+
+<p><strong><em>Change slide</em></strong></p>
+
+<p>In my early prototype I used the cpu for this and it got very hot and since this was a google cardboard demo I though it was important to not ignite the cardboard headset.
+That&#39;s not the kind of face meltingly awesome VR one should strive for.</p>
+
+<h2>Super crazy (don&#39;t do this),</h2>
+
+<p>If you would like to process HUGE datasets with a complex operation one can code a complex operation into a shader. Then the data can be entered in via the uniforms much like I did with the bunny demo. But instead of rendering an awesome demo. One can draw the values out as pixels in the frame buffer. This can be queried and turned back into numbers. Allowing you to use the power of your graphics card for data processing. Kind of like NVIDIA CUDA.</p>
+
+<p></div>
+</div></p>
+
+			</div>
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+	<script src="scripts/main.js"></script>
+	</body>
+</html>

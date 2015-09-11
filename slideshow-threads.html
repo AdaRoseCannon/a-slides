@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<title>Threads</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+			<div class="slide" data-slide-id="">
+				<div class="panel slide-content">
+<div class="panel-body flex" style="align-items: center;">
+<h1>The internet has threads</h1>
+<img src="images/threads.jpg" />
+</div>
+
+<p></div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>Removing work from the main thread.</h1>
+
+<p>The Web for many years was single threaded.
+Now we have web workers they allow us to offload some work into additional threads on the cpu.
+So we can leave the main thread to focus on performing the rendering operations.</p>
+
+<ul>
+<li>JSON parzing is slow.</li>
+<li>We can use web workers (or the Service Worker) to perform our ajax requests and parze the JSON off of the main thread.</li>
+<li>We can then query bits of the JSON through the postMessage or MessageChannel apis.</li>
+</ul>
+
+<p>We can also use workers to do complex calculations which do not rely on interacting with the DOM.</p>
+
+<p>Compression library to expand data recieved in an ajax request. This data can then be processed in the worker and queried from the main thread.</p>
+
+<p>On the lighter side; If your website&#39;s winter holiday theme has realtime physically correct snowfall then perhaps perform these calculations in a worker and transfer the positions/rotations of each snowflake back to the main thread for rendering.</p>
+
+<p>But beware, there is a hidden cost of using workers. Transferring the data back to the main thread is not free. It needs to be deserialised in the main thread. So if you download a JSON file and parze it in a worker then send the whole object back to the main thread you gain NOTHING. The main thread still has to deserialize back into a JavaScript object.</p>
+
+<p>So make sure you only send what you need for rendering back to the main thread.</p>
+
+<p></div>
+</div></p>
+
+			</div>
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+	<script src="scripts/main.js"></script>
+	</body>
+</html>

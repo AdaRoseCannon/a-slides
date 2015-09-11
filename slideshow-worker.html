@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="">
+	<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
+	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<title>Worker</title>
+	<link rel="stylesheet" href="styles/compiled.css">
+
+</head>
+
+	<body>
+		<div class="slide-container">
+			<div class="slide" data-slide-id="">
+				<div class="panel slide-content">
+<div class="panel-body marked">
+
+## https://googlechrome.github.io/samples/service-worker/post-message/
+<div class="small-text flex">
+
+<div class="highlight"><pre><code class="js"><span class="kd">function</span> <span class="nx">workerMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// This wraps the message posting/response in a promise, which will resolve if the response doesn&#39;t</span>
+    <span class="c1">// contain an error, and reject with the error if it does. If you&#39;d prefer, it&#39;s possible to call</span>
+    <span class="c1">// controller.postMessage() and set up the onmessage handler independently of a promise, but this is</span>
+    <span class="c1">// a convenient wrapper.</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kr">const</span> <span class="nx">messageChannel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MessageChannel</span><span class="p">();</span>
+        <span class="nx">messageChannel</span><span class="p">.</span><span class="nx">port1</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">messageChannel</span><span class="p">.</span><span class="nx">port1</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+                <span class="nx">reject</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">error</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">messageChannel</span><span class="p">.</span><span class="nx">port1</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+                <span class="nx">resolve</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+        <span class="c1">// This sends the message data as well as transferring messageChannel.port2 to the service worker.</span>
+        <span class="c1">// The service worker can then use the transferred port to reply via postMessage(), which</span>
+        <span class="c1">// will in turn trigger the onmessage handler on messageChannel.port1.</span>
+        <span class="c1">// See https://html.spec.whatwg.org/multipage/workers.html#dom-worker-postmessage</span>
+        <span class="nx">myWorker</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="p">[</span><span class="nx">messageChannel</span><span class="p">.</span><span class="nx">port2</span><span class="p">]);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">workerMessage</span><span class="p">({</span>
+    <span class="nx">action</span><span class="o">:</span> <span class="s1">&#39;doThing&#39;</span><span class="p">,</span>
+    <span class="nx">myVar</span><span class="o">:</span> <span class="mi">4</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">response</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+
+
+
+<div class="highlight"><pre><code class="js"><span class="c1">// Recieve messages from the client and reply back onthe same port</span>
+<span class="nx">self</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+            <span class="k">switch</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">case</span> <span class="s1">&#39;doThing&#39;</span><span class="o">:</span>
+                    <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="nx">expensiveThing</span><span class="p">();</span>
+
+                <span class="k">default</span><span class="o">:</span>
+                    <span class="k">throw</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Invalid Action&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">success</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+            <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">success</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span> <span class="o">?</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span> <span class="o">:</span> <span class="nx">err</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">event</span><span class="p">.</span><span class="nx">ports</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+
+</div>
+
+<p></div>
+</div>
+<div class="panel notes">
+<div class="panel-body marked"></p>
+
+<h1>Message Channel API</h1>
+
+<p>Interfacing with workers is usually quite a bellyache with the postMessage API.</p>
+
+<p>The MessageChannel API which recently gained support across all platforms. Allows us to create a nice pattern for sending messages to workers.</p>
+
+<p>This is the important bit, the interface once can make is very simple and promise based much like the fetch API. Greatly increasing the ease of working with workers.
+</div>
+</div></p>
+
+			</div>
+		</div>
+		<footer>
+			<small>Ada Rose Edwards - @lady_ada_king<br />
+Render Performance and Animation - Smoooooooth</small>
+
+		</footer>
+	<script src="scripts/main.js"></script>
+	</body>
+</html>
