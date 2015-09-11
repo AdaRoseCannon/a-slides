@@ -4,11 +4,6 @@ title: Long Form Notes
 ---
 <div class="marked" style="padding:2em; overflow: auto; height: 100%;">
 
-## To add
-Include 6doam and Sound bunny as iframe examamples discuss what was done to make them fast. Jokes, SIMD slide, Type Slide, CITE origin of worker promise wrapper.
-
-----------
-
 # Animation Performance
 
 This talk covers rendering and animation performance. Both in the DOM and also general 2D and 3D animation in the web.
@@ -119,7 +114,6 @@ My slides will be online later,
 
 This is the important bit, the API is very nice and can be used to simply assign tasks to the worker with a nice async interface.
 
-
 # Synchronous IO operations
 
 Of the older webapis which are synchronous ***LocalStorage*** is probably the most commonly still used. There are several situations where it can be slow:
@@ -148,6 +142,10 @@ If you are using a Service Worker you are probably already doing precaching off 
 
 On our Six Degrees of Angela Merkel Four oh Four page project I downloaded 20s worth of precalculated data for our animation (300k) and then started buffering the rest of the animation data from the api. This allowed the animation to start quickly and never have to process a giant JSON file.
 
+You can compromise though, the times when the site needs to be most responsive is when animation is happening e.g. the user is touching, dragging, swiping or scrolling. But there are a few situations where you can be slow without the user noticing for example just after a click it takes about 100ms unresponsiveness for the site to start to feel slow. Which is loads of time to perform a large calculation such as measuring and relaying out the DOM a couple of times for an upcoming animation.
+
+If you are careful and nothing is being animated for example the user is reading an article take this time to deserialise a json object or precache the user's potential actions.
+
 ***Tweak 6doam to remove 404 sign for to get the nice buffering***
 
 # WebGL Shaders
@@ -167,7 +165,10 @@ That's not the kind of face meltingly awesome VR one should strive for.
 
 If you would like to process HUGE datasets with a complex operation one can code a complex operation into a shader. Then the data can be entered in via the uniforms much like I did with the bunny demo. But instead of rendering an awesome demo. One can draw the values out as pixels in the frame buffer. This can be queried and turned back into numbers. Allowing you to use the power of your graphics card for data processing. Kind of like NVIDIA CUDA.
 
-On the more realistic side of things one will be able to perform paralell maths using vectors when the SIMD API is implemented. SIMD is an upcoming JavaScript API it will allow one to perform simultaeneous calculations by mapping four numbers as properties of a 4 vector and do 4 operations at once. It is still on the cpu but should be able to process a large dataset a factor of 4 faster.
+## SIMD
+
+On the more realistic side of things one will be able to perform paralell maths using vectors when the SIMD API is implemented.
+SIMD is an upcoming JavaScript API. It will allow one to perform simultaeneous calculations by mapping four numbers as dimensions of a 4 vector and do 4 operations at once. It is still on the cpu but should be able to process a large dataset a factor of 4 faster.
 
 It can be used now in firefox nightly and wrapped webapps by shipping with chrome which has SIMD compiled in. I believe Intel XDK can do this for you.
 
@@ -185,8 +186,8 @@ It can be used now in firefox nightly and wrapped webapps by shipping with chrom
 * Make it behave from the moment the page is loaded.
 * Manage user expectations, don't show what they cannot interact with
 * Measure everything first then render second
-* Move as much as possible out of the main thread
-* * beware of serialization costs of transferring data between threads.
+* Move as much as possible out of the main thread, into workers or onto the graphics card.
+* * but beware of serialization costs of transferring data between threads.
 
 # References
 * <a href="http://dev.w3.org/csswg/css-containment/" target="_blank">Containment Spec</a>
