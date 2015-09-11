@@ -25,8 +25,11 @@ new ASlides(slideData, {
 		require('./a-slides/plugins/deep-linking'),
 		require('./a-slides/plugins/webrtc-bridge')({
 			peerSettings: {
-				key: 'l9uje6f673zq6w29',
-				secure: true
+				host: '1am.club',
+				secure: true,
+				port: 9000,
+				debug: 2,
+				path:"/peerjs"
 			}
 		})
 	]
