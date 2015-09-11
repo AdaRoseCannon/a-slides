@@ -39,37 +39,43 @@ gulp.task('jekyll', () => {
 	});
 });
 
-gulp.task('browserify', function () {
-	try {
-		mkdirSync('.tmp');
-	} catch (e) {
-		if (e.code !== 'EEXIST') {
-			throw e;
-		}
-	}
 
-	try {
-		mkdirSync('.tmp/scripts');
-	} catch (e) {
-		if (e.code !== 'EEXIST') {
-			throw e;
-		}
-	}
 
-	return Promise.all(readdirSync('./app/_scripts/').map(function (a) {
-		var path = './app/_scripts/' + a;
-		if (!statSync(path).isDirectory()) {
+gulp.task('vendor', () => {
+	return gulp.src([
+		'node_modules/sw-toolbox/*.{js,json}',
+	], {
+		dot: true
+	}).pipe(gulp.dest('.tmp/scripts'));
+});
+
+
+gulp.task('browserify', ['vendor'], function () {
+
+
+	const scripts = readdirSync('./app/_scripts/').map(a => ({
+		pathIn: '_scripts/' + a,
+		pathOut: 'scripts/' + a
+	}));
+
+	return Promise.all(scripts.map(function ({
+		pathIn,
+		pathOut
+	}) {
+		const loadPath = './app/'  + pathIn;
+		const outPath =  './.tmp/' + pathOut;
+		if (!statSync(loadPath).isDirectory()) {
 			return new Promise(function (resolve, reject) {
-				process.stdout.write('Browserify: Processing ' + a + '\n');
-								var writer = createWriteStream('.tmp/scripts/' + a);
-								writer.on('finish', function () {
-									resolve(a);
-								});
+				process.stdout.write('Browserify: Processing ' + loadPath + '\n');
+				const writer = createWriteStream(outPath);
+				writer.on('finish', function () {
+					resolve(loadPath);
+				});
 				browserify({ debug: true })
 					.transform(babelify.configure({
 						optional: ['runtime']
 					}))
-					.require(require.resolve(path), { entry: true })
+					.require(require.resolve(loadPath), { entry: true })
 					.bundle()
 					.on('error', function(err) {
 						this.emit('exit');
@@ -85,7 +91,7 @@ gulp.task('browserify', function () {
 	})).then(function () {
 		process.stdout.write('Browserify: Finished all\n');
 	}, function (e) {
-		console.log(e);
+		process.stdout.write(e);
 	});
 });
 
@@ -132,7 +138,7 @@ gulp.task('html', ['jekyll', 'styles'], () => {
 });
 
 gulp.task('images', () => {
-	return gulp.src('app/images/**/*')
+	return gulp.src(['app/images/**/*', 'app/*.png'])
 		.pipe($.if($.if.isFile, $.cache($.imagemin({
 			progressive: true,
 			interlaced: true,
@@ -155,10 +161,9 @@ gulp.task('fonts', () => {
 
 gulp.task('scripts', ['browserify'], () => {
 	return gulp.src([
-		'.tmp/**/*.js', // everything which has been browserified
+		'.tmp/**/*.{js,json}', // everything which has been browserified
 		'app/*.js' // service worker
 	])
-	.pipe($.uglify())
 	.pipe(gulp.dest('dist'));
 });
 
@@ -167,7 +172,7 @@ gulp.task('clean', del.bind(null, ['.tmp', 'dist', '.jekyll']));
 gulp.task('serve', ['html', 'scripts', 'images', 'fonts'], () => {
 	browserSync({
 		notify: false,
-		port: 9000,
+		port: 9123,
 		server: {
 			baseDir: [ '.tmp', 'dist', 'app'],
 			routes: {}
