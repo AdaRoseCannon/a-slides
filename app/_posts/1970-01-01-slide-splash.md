@@ -10,6 +10,7 @@ categories: SlideShow
 <div class="author-card">
 {{ site.author.name }} - @{{ site.author.twitter }}<br />
 {{ site.author.company }}
+<div class="ft-labs"></div>
 </div>
 </div>
 </div>

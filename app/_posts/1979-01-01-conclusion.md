@@ -5,7 +5,7 @@ categories: SlideShow
 
 <div class="panel slide-content">
 <div class="panel-body flex" style="align-items: center;">
-Animated gif of road runner
+<img src="images/roadrunner.png" style="height: 100%" />
 </div>
 </div>
 <div class="panel notes">
