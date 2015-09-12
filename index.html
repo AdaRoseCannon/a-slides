@@ -412,26 +412,56 @@ http://www.stevesouders.com/blog/2014/02/11/measuring-localstorage-performance/
 
 <p>On the a page&#39;s first load it is pretty common practice to cache a whole bunch of assets for later use.</p>
 
-<p>Front loading your content like this can be great for later loading performance but parsing JS and decoding images can also quite expensive.</p>
+<p>Front loading your content like this can be great for later loading performance.</p>
 
-<p>This added stress can make your site&#39;s first few moments be really janky or even unresponsive, as the user can neither click nor scroll. You might as well have just sent down a pretty picture of your above the fold content.</p>
+<p>Unfortunately parzing JS and decoding images can also quite expensive.</p>
 
-<p>When the page looks like it is ready to be used it should also be readily responding to a users interactions.</p>
+<p>This added stress can make your site&#39;s first few moments be really janky or even unresponsive.</p>
 
-<p>Especially if you have an interstitial, I can&#39;t think of a faster way to make a user bounce than to hide the content with a box which cannot neither be closed or scrolled past because the rest of the site is still loading.</p>
+<p>The user can neither click nor scroll. You might as well have just sent down a pretty picture of your above the fold content.</p>
 
-<p>If there is need to query some large JSON to view your site but not all the data is needed right there and then. Aside from parsing it off thread as mentioned earlier one can just break up the JSON to so that it can be queried from the server in smaller API reqests a bit later into your pages life, http2 speeds this up nicely.</p>
+<p><strong><em>When the page looks like it is ready to be used it should also be readily responding to a users interactions.</em></strong></p>
+
+<p>Especially if a site has an interstitial.</p>
+
+<p>The user&#39;s very first interaction with your site, they are presented with</p>
+
+<p>A barrier requiring the user to interact in order to see sone content.</p>
+
+<p>Since the browser is struggling with parzing and caching the new assets.</p>
+
+<p>The user&#39;s attempts to close the interstial are futile or laggy,<br>
+they will probably bounce. rather than wait for the site to start working</p>
+
+<p><strong><em>The interstitial looked closable but wasn&#39;t responding straight away this is not a good experience</em></strong></p>
+
+<p>Load just the minimum amount of content for the first use. Load more later into the site&#39;s life time.</p>
+
+<p>If there is need to query some large JSON to view your site but not all the data is needed right there and then.</p>
 
 <p>Don&#39;t try to eat an elephant in a single mouthful.</p>
 
 <p>If you are using a Service Worker you are probably already doing precaching off thread using the cache API so good on you.</p>
 
-<p>On our Six Degrees of Angela Merkel Four oh Four page project I start with 20s worth of precalculated data for our animation to get started fast. The remaining 5MB of data was also broken into 20s chunks which could be parzed in a single frame. Instead of marring the animation of the initial landing.</p>
+<p>On our Six Degrees of Angela Merkel Four oh Four page project I start with just 20s worth of precalculated data for our animation to get started fast.</p>
 
-<p>You can compromise on performance though, the times when the site needs to be most responsive is when animation is happening e.g. the user is touching, dragging, swiping or scrolling or when the user is being prompted for input. But there are a few situations where you can be slow without the user noticing for example just after a click or tap interaction it takes about 100ms unresponsiveness for a site to start to feel slow. Which is oodles of time to perform a large calculation such as measuring and relaying out the DOM a couple of times for an upcoming animation.</p>
+<p>The remaining 10MB of data was also broken into 20s chunks which could be parzed in a single frame.</p>
 
-<p>If you are careful and nothing is being animated for example the user is reading an article take this time to deserialise a json object or precache the user&#39;s potential actions.
-</div>
+<p>Parzing a full 10MB JSON file would have caused our smooth animation to look Janky during the first few seconds when we have the most of the user&#39;s attention.</p>
+
+<p>You can compromise on performance though,</p>
+
+<p>The times when the site needs to be most responsive is when interaction and animation is happening e.g. the user is touching, dragging, swiping or scrolling or when the user is being prompted for input.</p>
+
+<p>But there are a few situations where you can be slow without the user noticing for example just after a click or tap interaction it takes about 100ms unresponsiveness for a site to start to feel slow.</p>
+
+<p>Which is oodles of time to perform a large calculation such as precaching data or performing calculations for an upcoming animation. </p>
+
+<p>[If you are reading my notes check the code for the fastdom slide]</p>
+
+<p>If you are careful and nothing is being animated for example the user is reading an article take this time to deserialise a json object or precache the user&#39;s potential actions.</p>
+
+<p></div>
 </div></p>
 </div>
 
