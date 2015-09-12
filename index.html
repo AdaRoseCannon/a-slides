@@ -476,20 +476,53 @@ they will probably bounce. rather than wait for the site to start working</p>
 
 <h1>WebGL Shaders</h1>
 
-<p>In WebGL inorder to produce special effects really performantly shaders can be used. Shaders are scripts which get compiled when instantiated (this can be slow) but they can process huge amounts of data very quickly on your computers graphics card. This has the advantage of being off the main thread and being run on your computers graphics hardware. Graphics cards are very powerful and specialise in vector maths can process huge amounts of data very quickly.</p>
+<p>In WebGL to produce special effects really performantly shaders can be used.</p>
 
-<p>If working with WebGL and are animating a fixed topology e.g. Waves, 3D graphs, fixed geometry models. Do the vertex transforms in the vertex shader rather than updating the geometry on the cpu, you will get much better performance.</p>
+<p>Shaders are scripts which get compiled when instantiated (this can be slow).</p>
 
-<p>In this demo I set the sound data from the microphone as the &#39;uniforms&#39; constants in the vertex shader. The vertex shader then processes this data to work out how it should effect each vertex. There are over 4000 vertices and it does not struggle even on a lower end phone.</p>
+<p>They can process huge amounts of data very quickly on your computers graphics card.</p>
+
+<p>This has the advantage of being off the main thread and being run on your computers graphics hardware.</p>
+
+<p>Graphics cards are very powerful and specialise in vector maths can process huge amounts of data very quickly.</p>
+
+<p>They can process many thousands of points in a few milliseconds.</p>
+
+<p>If working with WebGL and are animating a fixed topology e.g. 3D graphs and data visualisations, fixed geometry models. Tranform eacho point in the Shader rather than setting the geometry using the cpu, you will get very good performance.</p>
+
+<p>In this demo I send sound data from the microphone to the Shader.</p>
+
+<p>The shader then processes this data to work out how it should effect each point on the model.</p>
+
+<p>There are over 4000 vertices and it does not struggle even on a lower end phone.</p>
 
 <p><strong><em>Change slide</em></strong></p>
 
-<p>In my early prototype I used the cpu for this and it got very hot and since this was a google cardboard demo I though it was important to not ignite the cardboard headset.
-That&#39;s not the kind of face meltingly awesome VR one should strive for.</p>
+<p>In my early prototype I used the cpu for this.
+It got very hot and this is a google cardboard demo.
+I thought it was important to set fire to the cardboard headset with the mobile&#39;s cpu. (Joke)</p>
+
+<p>That&#39;s not the kind of face meltingly awesome VR one should strive for.</p>
 
 <h2>Super crazy (don&#39;t do this),</h2>
 
-<p>If you would like to process HUGE datasets with a complex operation one can code a complex operation into a shader. Then the data can be entered in via the uniforms much like I did with the bunny demo. But instead of rendering an awesome demo. One can draw the values out as pixels in the frame buffer. This can be queried and turned back into numbers. Allowing you to use the power of your graphics card for data processing. Kind of like NVIDIA CUDA.</p>
+<p>If you would like to process HUGE datasets with 100s of thousands of data points.</p>
+
+<p>Your complex operation one can code your complex operation into a shader.</p>
+
+<p>Then the data can be entered in much like I did with the bunny demo.</p>
+
+<p>But instead of rendering an awesome demo.</p>
+
+<p>One can draw the values out as pixels in the frame buffer.</p>
+
+<p>You can look at the colour of each pixel to extract your data from Red Blue Green information.</p>
+
+<p>Allowing you to use the power of your graphics card for data processing.</p>
+
+<p>Kind of like NVIDIA CUDA.</p>
+
+<p>But seriously don&#39;t do this. If you do I want to see it. </p>
 
 <p></div>
 </div></p>
@@ -504,12 +537,25 @@ That&#39;s not the kind of face meltingly awesome VR one should strive for.</p>
 <div class="panel notes">
 <div class="panel-body marked"></p>
 
-<h2>SIMD</h2>
+<h1>SIMD</h1>
 
-<p>On the more realistic side of things one will be able to perform paralell maths using vectors when the SIMD API is implemented.
-SIMD is an upcoming JavaScript API. It will allow one to perform simultaeneous calculations by mapping four numbers as dimensions of a 4 vector and do 4 operations at once. It is still on the cpu but should be able to process a large dataset a factor of 4 faster.</p>
+<p>On the more realistic side of things there is an upcoming API which will allow you to do parallel data processing on the cpu in the web.</p>
 
-<p>It can be used now in firefox nightly and wrapped webapps by shipping with chrome which has SIMD compiled in. I believe Intel XDK can do this for you.</p>
+<p>It is called <strong><em>SIMD</em></strong>.</p>
+
+<p>It will allow one to perform simultaeneous calculations by mapping four numbers as dimensions of a 4 vector and do 4 operations at once.</p>
+
+<p>In a way very similar to the way shaders do on the graphics chip.</p>
+
+<p>It is still on the cpu but should be able to process a large dataset much faster.</p>
+
+<p>A factor of 4, 8 or 16 faster.</p>
+
+<p>It can be used now in firefox nightly</p>
+
+<p>and used in wrapped webapps by shipping with chrome which has SIMD compiled in, Intel XDK can do this for you.</p>
+
+<p>Or you can just wait a bit.</p>
 
 <p></div>
 </div></p>
