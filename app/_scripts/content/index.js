@@ -3,6 +3,5 @@
  */
 
 module.exports = {
-	'/slide-splash': require('./slide0'),
-	'/the-first-slide': require('./slide1'),
+	'/the-first-slide': require('./three-dee'),
 };

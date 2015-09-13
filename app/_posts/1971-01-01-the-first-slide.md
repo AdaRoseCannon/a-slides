@@ -1,14 +1,11 @@
 ---
 layout: slide
-title:  "Slide Splash"
 categories: SlideShow
-author: Ada Rose Edwards
-slideId: the-first-slide
 ---
 
 <div class="panel slide-content">
 	<div class="panel-body marked">
-## This is the first slide
+
 	</div>
 </div>
 <div class="panel notes">

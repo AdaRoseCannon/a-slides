@@ -44,6 +44,7 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
+    "fast-event-emitter": "0.0.2",
     "gulp-plumber": "^1.0.1",
     "sw-toolbox": "^2.0.4",
     "tween.js": "^15.0.0"

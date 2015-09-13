@@ -53,6 +53,7 @@ gulp.task('jekyll', () => {
 gulp.task('vendor', () => {
 	return gulp.src([
 		'node_modules/sw-toolbox/*.{js,json}',
+		'app/_scripts/content/vendor/*.{js,json}',
 	], {
 		dot: true
 	}).pipe(gulp.dest('.tmp/scripts'));
