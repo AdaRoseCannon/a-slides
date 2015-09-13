@@ -6,7 +6,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/GoogleChrome/sw-toolbox"
+    "url": "git+https://github.com/GoogleChrome/sw-toolbox.git"
   },
   "devDependencies": {
     "browserify": "^6.3.2",
@@ -15,7 +15,7 @@
     "jshint-stylish": "^1.0.0",
     "path-to-regexp": "^1.0.1",
     "qunitjs": "^1.18.0",
-    "serviceworker-cache-polyfill": "git+https://github.com/coonsta/cache-polyfill",
+    "serviceworker-cache-polyfill": "git+https://github.com/coonsta/cache-polyfill.git",
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
@@ -30,7 +30,7 @@
   "homepage": "https://github.com/GoogleChrome/sw-toolbox",
   "_id": "sw-toolbox@2.0.4",
   "_shasum": "4868cbfef06f4f02562918f7d6ec681a58b92b8e",
-  "_from": "sw-toolbox@>=2.0.4 <3.0.0",
+  "_from": "sw-toolbox@*",
   "_npmVersion": "1.4.28",
   "_npmUser": {
     "name": "wibblymat",
@@ -47,5 +47,6 @@
     "tarball": "http://registry.npmjs.org/sw-toolbox/-/sw-toolbox-2.0.4.tgz"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/sw-toolbox/-/sw-toolbox-2.0.4.tgz"
+  "_resolved": "https://registry.npmjs.org/sw-toolbox/-/sw-toolbox-2.0.4.tgz",
+  "readme": "ERROR: No README data found!"
 }
