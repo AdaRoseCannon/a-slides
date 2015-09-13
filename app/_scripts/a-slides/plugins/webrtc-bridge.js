@@ -125,7 +125,7 @@ module.exports = function ({peerSettings}) {
 
 	return function ({slideContainer}) {
 
-		slideController.makeAndBindButton('Be Slide Controller', function () {
+		slideController.makeAndBindButton('WebRTC Parent', function () {
 			webRTCSetup({
 				peerSettings,
 				peerController: true,
@@ -142,7 +142,7 @@ module.exports = function ({peerSettings}) {
 			});
 		});
 
-		slideController.makeAndBindButton('Recieve Control', function () {
+		slideController.makeAndBindButton('WebRTC Child', function () {
 			webRTCSetup({
 				peerSettings,
 				peerController: false,
