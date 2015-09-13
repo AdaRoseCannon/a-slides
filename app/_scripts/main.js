@@ -25,7 +25,11 @@ new ASlides(slideData, {
 		require('./a-slides/plugins/deep-linking'),
 		require('./a-slides/plugins/webrtc-bridge')({
 			peerSettings: {
-				key: 'l9uje6f673zq6w29'
+				host: '1am.club',
+				secure: true,
+				port: 9000,
+				debug: 2,
+				path:"/peerjs"
 			}
 		})
 	]
@@ -37,4 +41,18 @@ if (location.search === '?presentation') {
 
 if (location.search === '?notes') {
 	slideContainer.classList.add('hide-presentation');
+}
+
+
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('sw.js')
+		.then(function(reg) {
+			console.log('sw registered', reg);
+		}).catch(function(error) {
+			console.log('sw registration failed with ' + error);
+		});
+
+	if (navigator.serviceWorker.controller) {
+		console.log('Offlining Available');
+	}
 }

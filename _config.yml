@@ -3,13 +3,13 @@
 # 2. config.build.yml
 # 3. config.yml
 
-name: My Title
-description: My Subtitle
+name: Render Performance and Animation
+description: Go fast; Break expectations.
 author:
-  name: Jane Bloggs
-  email: fakeemail@123fakestreet.com
-  twitter: jbloggs
-  company: Acme Inc.
+  name: Ada Rose Edwards	
+  email: ada@ada.is
+  twitter: lady_ada_king
+  company: FT Labs
 
 # Grunt handles images and assets.
 exclude: ['img', '**.css', '**.js', 'fonts', 'node_modules',
@@ -21,3 +21,7 @@ permalink: /:categories-:title.html
 
 pygments: true
 highlighter: pygments
+
+markdown: redcarpet
+
+excerpt_separator: qwertyuiopsdfghjkl

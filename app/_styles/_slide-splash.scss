@@ -1,4 +1,26 @@
-.slide[data-slide-id=slide-splash] .panel.slide-content {
-	background: url('../images/pattern.svg');
+.slide[data-slide-id="/slide-splash"] .panel.slide-content {
+
+	font-size: 1.5em;
+
+	background: url('../images/blue-orange-yellow.jpg');
 	background-size: cover;
+	color: white;
+
+	.ft-labs {
+		width: 5em;
+		height: 5em;
+		background: url('../images/labs-logo.svg');
+		background-repeat: no-repeat;
+		background-size: contain;
+		position: absolute;
+		right: 1em;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-size: 1.5em;
+		font-weight: bold;
+		width: calc(100% - 5em);
+	}
 }
