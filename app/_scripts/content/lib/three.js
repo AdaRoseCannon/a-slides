@@ -71,11 +71,14 @@ function MyThree(target = document.body){
 
 		// iterate over the physics physicsObjects
 		for ( let i of physicsObjects ) {
-			if (i.meta.type !== 'genericObject') continue;
 
 			if (threeObjectsConnectedToPhysics[i.id]) {
 				threeObjectsConnectedToPhysics[i.id].position.set(i.position.x, i.position.y, i.position.z);
-				threeObjectsConnectedToPhysics[i.id].rotation.setFromQuaternion(new THREE.Quaternion(i.quaternion.x, i.quaternion.y, i.quaternion.z, i.quaternion.w));
+
+				// Don't set quaternian
+				if (i.quaternion) {
+					threeObjectsConnectedToPhysics[i.id].rotation.setFromQuaternion(new THREE.Quaternion(i.quaternion.x, i.quaternion.y, i.quaternion.z, i.quaternion.w));
+				}
 			}
 		}
 	});
@@ -87,13 +90,13 @@ function MyThree(target = document.body){
 		scene.add(mesh);
 	};
 
-	this.addSphere = (radius) => {
+	this.createSphere = (radius) => {
 		const geometry = new THREE.SphereGeometry(radius || 1, 8, 5);
 		const mesh = new THREE.Mesh(geometry, materials.wireframe);
 		return mesh;
 	};
 
-	this.addObject = (id) => fetchJSON('models/' + id + '.json')
+	this.createObject = (id) => fetchJSON('models/' + id + '.json')
 			.then(sceneIn => require('./fixGeometry').parse(sceneIn));
 
 	this.walkTo = (destination) => {

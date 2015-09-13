@@ -43,14 +43,14 @@ module.exports = function ({slideContainer}) {
 			 * Set up bindings 
 			 */
 
-			slideController.makeAndBindButton('SW Parent', function () {
+			slideController.makeAndBindButton('Parent', function () {
 				slideContainer.on('a-slides_slide-setup', ({detail}) =>  sendSWMessage(detail));
 				slideContainer.on('a-slides_trigger-event', () => sendSWMessage({
 					triggerEvent: true
 				}));
 			});
 
-			slideController.makeAndBindButton('SW Child', function () {
+			slideController.makeAndBindButton('Child', function () {
 
 				window.addEventListener('message', function (e) {
 					if(e.data.triggerEvent) {
