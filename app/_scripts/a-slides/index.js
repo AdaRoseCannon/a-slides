@@ -25,6 +25,10 @@ function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 
 		this.currentEvents = slideData[slideId].action.bind(slideContainer.$(slideSelector(slideId)))();
 
+		// if a go to new slide is already triggered then cancel it so
+		// we don't accidentially go to the wrong slide.
+		clearTimeout(this.nextSlideTimeOut);
+
 		// Do first action
 		this.currentEvents.next();
 	}.bind(this);
@@ -74,7 +78,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 		if(this.currentEvents.next().done) {
 
 			// Wait a smidge before triggering the next slide.
-			setTimeout(goToNextSlide, 10);
+			this.nextSlideTimeOut = setTimeout(goToNextSlide, 10);
 		}
 	}.bind(this));
 
