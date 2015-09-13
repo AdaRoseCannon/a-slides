@@ -23,6 +23,8 @@ Aim to cover rendering and animation performance.
 
 Both in the DOM and also general 2D and 3D animation in the web.
 
+I will touch on many different things and hope to provide some inspiration.
+
 The ideal feeling is that of a native experience.
 
 The goal of performance is so that the user doesn't notice the web page.
