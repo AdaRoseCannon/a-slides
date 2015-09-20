@@ -1,7 +1,6 @@
 /* global THREE, DeviceOrientationController */
 'use strict';
 const EventEmitter = require('fast-event-emitter');
-const fetchJSON = require('./fetchJSON.js');
 const util = require('util');
 const TWEEN = require('tween.js');
 
@@ -96,9 +95,6 @@ function MyThree(target = document.body){
 		return mesh;
 	};
 
-	this.createObject = (id) => fetchJSON('models/' + id + '.json')
-			.then(sceneIn => require('./fixGeometry').parse(sceneIn));
-
 	this.walkTo = (destination) => {
 		new TWEEN.Tween( camera.position )
 			.to( destination, 2000 )
@@ -144,12 +140,6 @@ function MyThree(target = document.body){
 		}
 
 		return collection;
-	};
-
-	this.addSingle = (id) => {
-		const loader = new THREE.JSONLoader();
-		return fetchJSON('models/' + id + '.json')
-			.then(sceneIn => loader.parse(sceneIn));
 	};
 
 	this.animate = () => {

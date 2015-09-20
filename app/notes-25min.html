@@ -1,0 +1,157 @@
+---
+layout: slide
+title: notes
+---
+<div class="marked notes" style="padding: 1em; overflow-y: auto; height: 100%;">
+# Intro
+
+I've loved VR yadda yadda...
+
+## VR has a profound user reaction.
+
+[VR Faces]
+
+## There are a few competing solutions coming out.
+
+* Facebook Oculus Rift
+* Samsung Gear VR
+* Sony Playstation VR (Formerly morpheus)
+* Steam's Vive
+* Cardboard
+
+Out of these cardboard is an order of magnitude cheaper and doesn't require any specialist equipment to use beyond a smart phone.
+
+It goes hand in hand with the web to bring VR to the world.
+
+I haven't got long to cover what is a vast and almost fractal like with how detailed one can study so I am
+going to touch on building an experience as a developer.
+
+I won't go into 3D modelling or scene building just using geometry primatives.
+## What is VR
+
+2 broad categories are
+
+Prerendered
+
+* Recorded and assembled using Google's Jump (16 go-pro)
+* Prendered on a computer
+
+Realtime
+
+## Real time graphics
+
+* Can be exploratory and procedurally generated
+* Can have real physics and user interaction
+* Content can be smaller than pre rendered so it can be delivered quicker.
+
+
+## Introduction to THREE.js
+
+THREE.js is the most popular webGL library on the web, it handles a lot of the low level webGL
+rendering for us without it we would have to create our own primatives.
+
+# Primatives
+### Geometry
+
+Geometry is how the topology of the shape is defined it is defined as collection of properties.
+* A list of points in 3D space, known as Vertices
+* A list of faces which is defined by 3 or 4 Vertices arranged  counterclockwise
+* A precalculated face normal, the face normal determines which direction
+* UVs which is how you can unfold the mesh so that it maps to a point on a 2D plane
+* Vertex colour (optional)
+
+
+### Materials
+A material is a description of how to fill the 3D shape with colour when drawing it to the screen.
+* Different Material Types Lambert/Phong/Simple have different lighting calculations
+* These calculations are known as the fragment shader.
+* The different Materials tend to have some properties in common.
+
+* Texture Map: The colour applied at each point on the UV Map
+* Normal Map: Override the normal with one from this map where rgb maps to xyz of a normal vector
+* Whether to use the colour from the geometry
+* Wireframe: just draw a wireframe rather than the model
+
+### Mesh
+The mesh is a pairing of a Geometry and a Material
+
+### Camera
+The camera defines how the geometry is drawn to the screen.
+It can be Perspective (like a real camera)
+Or orthogonal like Age of empires
+It defines the perspective transform. Which is defined by it's Position, Rotation and Field of View.
+It draws everything within a Trapezoid defined by the FoV the Draw Distance and the Near Distance.
+Reducing the draw distance is a great way to increase performance.
+
+### Sprites
+A very simple way of rendering is just drawing images to the screen like in DOOM known as sprites.
+Sprites always face the camera.
+They are very fast to render and are often used because vsat numbers of them can be rendered cheaply.
+E.g. Dust, Grass, 
+
+### Lights
+Lights affect a materials illumination. How so depends on the Material proeprties.
+
+### Fog
+Fog is used to occlude geometry at a distance great for hiding what is beyond the camera's draw distance.
+Silent hill used it for great effect by creating an opressive atmosphere whilst also increasing performance on limited hardware.
+
+### Scene Graph
+Some objects can be descendants of others and they will recieve all of the same transforms as the parent.
+This is a great way to group items together.
+Robot, with Head + Eyes, body with arms.
+
+It is also useful to attach objects to the camera so that they stay in fixed view of the user like a heads up display.
+
+
+
+
+
+# Building a scene in Blender
+
+In this scene I have defined some simple geometry, assigned materials and created lights.
+
+I can now export it as a JSON file for THREE.
+
+By Selecting scene it ensures that the entire scene is exported.
+
+One important thing to note is that Blender defines a different Coordinate system to THREE.js so THREE performs a transformation to make it match.
+
+# Connecting some physics
+
+I am running a physics engine off the main thread. I have written a little tool to allow me to pick out objects with which I would like physics applied and return references to them.
+
+Then in my render loop I can update the physics, import the position and rotation of the physics objects and apply them to their relation in the scene.
+
+Note that I am rendering more detailed models and doing the physics on low detail models.
+
+# Setting it up for VR
+
+Attatching the camera to the Device Orientation Conroller
+
+In an ideal world we wouldn't have to hard code support for devices and rely on the device orientation controller.
+
+Which is where the WebVR comes in.
+
+# WebVR
+
+Gives access to the VR Device sensors via:
+
+`HMDVRDevice` - optical properties of the device - information on how to distort the image so that HMDs such as the Rift and will display it correctly.
+
+`PositionSensorVRDevice` - Access to the Position/Rotation of Headset - current library uses the device orientation api.
+
+
+#Tips:
+* Prebake lighting for great looking cheap lighting.
+* When moving the camera keep the camera's distance from the floor the same to avoid a weird floaty disconnect feeling.
+* Keep a consistent 60 fps frame rate.
+* Don't rotate or teleport the camera, you will make the user sick or confused.
+* Be aware of vertigo
+* Be prepared for a user to start facing in an unintended direction
+* Most users don't realize they can turn around and will only face one direction
+* Load assets as they are needed after 7-10s of loading the user will get bored and leave
+* Use a Service Worker to precache assets in a seperate thread (Android Only)
+* A reticule will help avoid motion sickness
+* An app manifest will ensure the device starts in the correct orientation
+</div>

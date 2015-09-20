@@ -98,11 +98,7 @@ body {
 
 		&.slide-content {
 			padding: 1em;
-			&, & pre, & li {
-				font-size: 1.5em;
-			}
 			overflow: hidden;
-
 			transition: transform ease 0.5s, box-shadow ease 0.5s;
 			transform: scale(0.4) translate(-1em, -1em);
 			transform-origin: bottom right;

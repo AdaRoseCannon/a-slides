@@ -16,7 +16,9 @@ const slideContainer = document.querySelector('.slide-container');
 Promise.all([
 	addScript('https://polyfill.webservices.ft.com/v1/polyfill.min.js?features=fetch,default'),
 	addScript('./scripts/three.min.js')
-]).then(() => {
+])
+.catch(e => console.error(e))
+.then(() => {
 	new ASlides(slideData, {
 		slideContainer,
 		plugins: [

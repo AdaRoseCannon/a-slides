@@ -42,15 +42,12 @@
     "time-grunt": "^1.2.1",
     "verlet-constraint": "^1.0.3",
     "verlet-point": "^1.2.1",
+    "fast-event-emitter": "0.0.2",
+    "sw-toolbox": "^2.0.4",
+    "tween.js": "^15.0.0",
     "verlet-system": "^1.0.15"
   },
   "engines": {
     "node": ">=0.8.0"
-  },
-  "dependencies": {
-    "fast-event-emitter": "0.0.2",
-    "gulp-plumber": "^1.0.1",
-    "sw-toolbox": "^2.0.4",
-    "tween.js": "^15.0.0"
   }
 }

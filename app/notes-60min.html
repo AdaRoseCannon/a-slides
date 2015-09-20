@@ -1,0 +1,403 @@
+---
+layout: slide
+title: notes
+---
+<div class="marked notes" style="padding: 1em;">
+# Intro
+
+When I was a child this was my favourite TV show:
+
+[Jonny Quest]
+
+and the love of virtual reality has stayed with me.
+
+Through numerous scifi books
+
+[Dennou Coil]
+
+[The Matrix]
+
+[Sword Art Online]
+
+# Virtual Reality
+
+In recent years Virtual Reality has really taken off.
+
+and head Mounted Displays have become the defacto way to perfom VR. 
+
+VR gives you an immersive experience.
+
+Which i we do our job right should awe and amaze.
+
+This is our goal reaction:
+
+[Flip through a dozen VR faces] 
+
+
+## Demonstrate how cardboard and the web go hand in hand.
+
+The Cardboard is an open hardware Virtual reality headset which can be bought cheaply or built even cheaper. 
+
+[Slide with schematics image/video]
+
+Requiring just a smartphone which supports device orientation and graphics rendering.
+
+Android and iOS should both work, but I don't have an iPhone to dev on so I can't garantee my demos will work.
+
+I have a few with me today and have built a short very simple experience you can have a go in afterwards. (Unfinished?)
+
+Cardboard reduces the barrier to entry to VR from 100s of pounds for a Rift, Vive or PlayStation VR to around 15 for anyone who already has a smart phone.
+
+
+# Content
+
+## Explain two types of VR content which can be produced
+
+## Pre recorded Video or pre-rendered animation.
+
+This is content which has been recorded using specialty camera equipment,
+
+[Google Camera device unveiled at io]
+
+or rendered for VR on a computer.
+
+[That film which was (kickstarted?) for VR]
+
+this content can be released through youtube and played through a smartphone's youtube app.
+
+This allows you to experience snapshots of anywhere on the planet.
+
+[Flick through some beatiful places]
+
+and off planet too
+
+[shot of the earth from the international space station]
+
+
+
+## Realtime Graphics Content
+
+Realtime graphics content can be produced by a small team of 3d artists and developers.
+
+Interactivity Increases engagement.
+
+This talk is going to primarily be about building VR experiences in the mobile Web Browser.
+
+Starting with the fundamentals of 3D.
+
+
+
+
+# The illusion of depth
+
+Since the early 80s realtime 3d Graphics has been about presenting the illusion of 3D space on a 2D screen.
+
+[Elite screenshot]
+
+With a single camera there are many tricks the brain relies on to percieve depth.
+
+Think of what would help to catch a ball with one eye closed.
+
+* Occlusion - Painters Algorithm
+* Shadows on a plane
+* Relative motion to camera (Parallax effect)
+* Relative Size (Father Ted, Small Far Away)
+
+Perspective Camera, distortion (i.e. not orthographic)
+
+Most experiences rely on all of the above techniques to perform the illusion.
+
+VR gives us two more:
+
+* The paralax difference due to having 2 eyes.
+
+As an object gets closer ones face the image of the object in each eye differs in position to a greater extant.
+
+The brain, knowing the displacement of the eyes can work out how far away from the paralax in the image each eye recieves.
+
+[Diagram]
+
+* Being 'inside' the experience.
+
+Unlike 3D TV which gives a window into a world.
+
+VR places us into the experience it moves with us as we move our head.
+
+
+# Building a Realtime Experience
+
+
+
+## Defining the camera set up.
+
+* Depth of field,
+* Eye seperation
+* Field of View
+* Height of user
+* Lens Distortion
+
+Some of these will be specific to the HMD.
+
+Fortunately an upcoming spec allows us to read them from the HMD.
+
+# WebVR
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Defining shapes in 3D space
+
+Working with 3D it is very helpful to know a little about Vector Maths and Matrices.
+
+This isn't going to be comprehensive but should provide a basis for further research.
+
+Wikipedia is great for this.
+
+# Single Vector Properties
+
+* Position
+* Velocity
+* Scale
+* Rotation is complicated (Sometimes represented by a 4 Vector)
+* Face Normal
+
+## 2 3 Vector
+* Lines are defined by Two points on the line or a point and a direction
+* A line segment such as joining together two vertices is defined by the start and end point
+
+## n 3 Vector
+* Faces are defined using n (counter clockwise?) vertices
+* The face normal is defined by a 3 Vector
+
+## Faces have only one side, they can be made to render the back side. THe act of only rendering one side is known as back face culling.
+
+Two ways to multiply vectors Dot product and cross product.
+
+### Vector
+
+The cross product gives you a vector, it is the vector which points perpendicular to both vectors.
+
+It can be used to calculate face normals.
+
+### Scaler
+
+The dot product leaves you with scaler value. Which represents the projection of Vector onto another.
+
+If V1 and V2 are both unit vectors (Length of 1)
+
+V1.V2 === 1 Paralell
+V1.V2 === 0 Orthoginal
+V1.V2 === -1 Anti Paralell
+
+Or for comparing agains the normal to work out what side of a face a point is.
+
+It is directly related to the Cosine of the Angle between them so can be used to work out the angle between two vectors.
+
+So it is very useful for comparing an incoming light beam to a faces normal to work out how well it is lit. As light drops off as the angle gets further away from the face normal.
+
+# Matrices
+
+When looking at a slightly lower level you see transformations represented by Matrices.
+
+Matrices represent a transform.
+
+Vectors when Multiplied by that matrix have the transformation applied.
+
+Matrices for transforms in 3D space:
+
+* Identity
+* Rotation
+* Scale
+* Translate
+
+You can stack transforms into a single Matrix by Multiplying them together.
+
+Matrix Multiplication is not commutative.
+
+for example if you rotate something by PI/2 radians around y then translate it 1 unit along x
+
+it is not the same as translating it 1 unit along x then rotating it PI/2 radians about y
+
+When you transform a 3D object you perform the same matrix transform on every vertex.
+
+## 4 Vectors and 4 Matrices
+
+Often in lower level computer graphics vectors have 4 compnents and the Matrices are 4x4.
+
+This is because the perspective transformation is represented in this fashion but all of the matrixes can be extended to be simply extended to 4x4 matrices. 
+
+The resulting vector can have the 4th component (w) ignored as it does not represent a dimension in 3d space.
+
+# Scene Graphs
+
+3D scenes are arranged in scene graphs.
+
+Where the children of each element has all the transforms of its parents and grandparents applied.
+
+This allows one to manipulate segments of the scene with one transformation or attach objects to one another.
+
+
+
+
+# Tools for authoring content
+
+I initially learnt to use Maya to create content but due to the price and problems running on linux I have recently made an effort to switch to blender. As a developer it appealed to me.
+
+If you are more of the artistic sort then a tool like z-brush, mudbox or sculptris is more up your alley. Often the best 3D modellers have come from fine art.
+
+
+
+# Animation
+
+This tends to be of 3 sorts, Prebaked into the model such as skeleton animations. Often complex and artistically hard to produce. I used to be not awful but I haven't done it for many years.
+
+Calculated tween animations, calculated when needed. Create a path and tween along it. Spline and tweening libraries are your friends here.
+
+Real time Physics.
+
+
+
+# Physics 
+
+Whether simply Verlet Integration or somehting more complex it will probably be CPU intensive.
+
+You will need to create an interface to map the positions/rotations of physics objects to those of the render engine.
+
+Due to the complexity of physics although it can be done in realtime perhaps it is best to handle it off the main thread in a worker.
+
+Cannon JS, Verlet-System are my personal favourites.
+
+[Links to the code]
+
+
+
+# Interactivity
+
+The cardboard v2 has one button on the top. (The V1 had a magnet we could not use in the web)
+This button can be used to perform a tap on the screen. (Top middle)
+
+But one very important tool which we have which is to make active use of the viewers gaze.
+
+We can use where they look as an interaction tool.
+
+
+I put together a little library which uses THREEJSs raytracer to see what your looking at and handle events accordingly.
+Such as taps and gaze over.
+
+We can use any input available to the web though whether something sensible like a controller or something weird like the microphone input. 
+
+[Bunny Demo]
+
+If the user's hands are taken up you will need to provide a headstrap for the cardboard which is a bit awkward so best stick to the integrated button on top.
+
+
+# Libraries/Tech needed for converting your threejs experience into a Cardboard one
+
+* Device orientation controller
+* Stereo Effect
+* WebVR
+* Use a manifest to ensure the webapp if installed starts up in the ideal format 
+
+# Performance
+
+* Pull down assets as they are needed to get a quick start.
+* Don't pull down anything too big in a single frame to avoid illusion breaking Jank.
+* Perform what you can in a Shader or on a seperate thread.
+* Keep polycounts low, you are running on a phone. Don't build Crysis.
+* I can't give numbers it depends on how low you are willing to support and what else your demo is doing.
+* Don't have too many massive textures to save memory.
+
+
+### Tips
+
+It's a new platform, lots of users do not realise they can turn around lots of people
+will stand still and look at the pretty 3D view and not even move their head
+Need to get them to turn around. Perhaps something attention grabbing flying past their head.
+
+Start them off facing the desired content.
+
+They maybe like I don't get it, if they are facing something pretty boring.
+
+Surround the user with content so that they feel immersed.
+
+Use changing light in the users periphery to attract their attention.
+
+Let them take their time exploring the enviroment.
+
+### Difficulties of VR
+
+* Occasionally the accelerometer bugs out.
+* causing the view to rotate but the user is not turning to stay still.
+* Make active experience without making user throw up.
+* * Don't shake the camera,
+* * Don't rotate the camera
+* * The camera should move smoothly
+* * Make sure they stay the same height that feels weird
+* * Beware of vertigo
+* * A reticule placed in the Heads-Up-Display will help with motion sickness
+* * Frame rate needs to be kept consistent. We only have 60fps in the web which is low for VR. Jank (Dropped frames) will ruin the experiene.
+
+# Hard to do alone,
+
+A wide variety of skills are needed
+
+Desigining 3D assets is a difficult artform. BUT very rewarding. Developers should take a look at Maya and Blender, artists should take a look at Sculptris, z-brush and Mudbox for painting sculpture.
+
+Animators are especially important. 
+
+Most people working with 3D end up being jacks of all trades and a master of one.
+
+Good Audio and Visual artists are esential to a truly immersive eperience.
+
+### Places you can get Assets
+
+Turbo squid has many assets.
+
+### Where to learn
+
+
+
+# When done right
+
+Experience can be gripping.
+
+Immersive and memorable.
+
+Something the user will want to share.
+
+[Matrix: Neo Coming out of the Martirx, I think he likes it]
+
+References:
+
+https://en.wikipedia.org/wiki/Transformation_matrix#Examples_in_3D_computer_graphics
+
+</div>
