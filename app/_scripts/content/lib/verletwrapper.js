@@ -29,9 +29,8 @@ function workerMessage(message) {
 }
 
 class Verlet {
-	init(size) {
-		this.size = size;
-		return workerMessage({action: 'init', size});
+	init(options) {
+		return workerMessage({action: 'init', options});
 	}
 
 	getPoints() {
@@ -41,6 +40,10 @@ class Verlet {
 
 	addPoint(pointOptions) {
 		return workerMessage({action: 'addPoint', pointOptions});
+	}
+
+	reset() {
+		return workerMessage({action: 'reset'});
 	}
 }
 

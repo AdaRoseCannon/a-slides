@@ -19,27 +19,27 @@ const p3DPrototype = (new Point3D()).constructor.prototype;
 p3DPrototype.intersects = function (p) { return vec3.distance(this.position, p.position) <= this.radius + p.radius; };
 p3DPrototype.distanceFrom = function (p) { return vec3.distance(this.position, p.position); };
 
-function MyVerlet(size) {
+function MyVerlet(options) {
 
 	class VerletThreePoint {
 		constructor({
 			position,
 			radius,
 			mass,
-			charge,
+			attraction,
 			velocity,
 			meta
 		}) {
 			this.radius = radius;
 			this.mass = mass;
-			this.charge = charge;
+			this.attraction = attraction;
 			this.meta = meta || {};
 
 			this.verletPoint = new Point3D({
 				position: [ position.x, position.y, position.z ],
 				mass,
 				radius,
-				charge
+				attraction
 			}).addForce([ velocity.x, velocity.y, velocity.z ]);
 		}
 	}
@@ -50,6 +50,17 @@ function MyVerlet(size) {
 	this.addPoint = options => {
 		const p = new VerletThreePoint(options);
 		p.id = this.points.push(p);
+
+		// if a point is attractive add a pulling force
+		this.points.forEach(p0 => {
+			if (p.attraction || p0.attraction && p !== p0) {
+				this.connect(p, p0, {
+					stiffness: (p.attraction || 0) + (p0.attraction || 0),
+					restingDistance: p.radius + p0.radius
+				});
+			}
+		});
+
 		return p;
 	};
 
@@ -59,14 +70,15 @@ function MyVerlet(size) {
 			restingDistance: p1.radius + p2.radius
 		};
 
-		const c = new Constraint3D([p1, p2], options);
+		const c = new Constraint3D([p1.verletPoint, p2.verletPoint], options);
+		this.constraints.add(c);
 		return c;
 	};
 
-	this.size = size;
+	this.size = options.size;
 
 	this.world = new World3D({ 
-		gravity: [0, -9.8, 0],
+		gravity: options.gravity ? [0, -9.8, 0] : undefined,
 		min: [-this.size.x/2, 0, -this.size.z/2],
 		max: [this.size.x/2, this.size.y, this.size.z/2],
 		friction: 0.98
@@ -78,25 +90,8 @@ function MyVerlet(size) {
 		const t = Date.now();
 		const dT = Math.min(0.032, (t - oldT) / 1000);
 		const vP = this.points.map(p => p.verletPoint);
-		const l = vP.length;
 
 		this.constraints.forEach(c => c.solve());
-
-		// Perform collisions super simple and naive
-		const tempVec = vec3.create([0, 0, 0]);
-		for (let i = 0; i < l; i++) {
-			for (let j=0; j<i; j++) {
-				let p1 = vP[i], p2 = vP[j];
-
-				if (p1.intersects(p2)) {
-					vec3.subtract(tempVec, p1.position, p2.position);
-					vec3.scale(tempVec, tempVec, 0.1*vec3.distance(p1.position, p2.position)/Math.pow(vec3.length(tempVec), 2));
-
-					vec3.add(p1.position, p1.position, tempVec);
-					vec3.subtract(p2.position, p2.position, tempVec);
-				}
-			}
-		}
 
 		this.world.integrate(vP, dT * timeFactor);
 		oldT = t;
@@ -114,8 +109,7 @@ self.addEventListener('message', function(event) {
 
 			switch(event.data.action) {
 				case 'init':
-					verlet = new MyVerlet(event.data.size);
-					// setInterval(verlet.animate.bind(verlet), 16);
+					verlet = new MyVerlet(event.data.options);
 					return;
 
 				case 'getPoints':
@@ -134,6 +128,10 @@ self.addEventListener('message', function(event) {
 
 				case 'addPoint':
 					event.data.point = verlet.addPoint(event.data.pointOptions);
+					return;
+
+				case 'reset':
+					verlet.points.splice(0);
 					return;
 
 				default:
