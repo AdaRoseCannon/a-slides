@@ -40,6 +40,8 @@ Realtime
 
 ## Real time graphics
 
+### Show screen recording of Cardboard2
+
 * Can be exploratory and procedurally generated
 * Can have real physics and user interaction
 * Content can be smaller than pre rendered so it can be delivered quicker.
@@ -90,7 +92,7 @@ They are very fast to render and are often used because vsat numbers of them can
 E.g. Dust, Grass, 
 
 ### Lights
-Lights affect a materials illumination. How so depends on the Material proeprties.
+Lights affect a materials illumination. How so depends on the Material properties.
 
 ### Fog
 Fog is used to occlude geometry at a distance great for hiding what is beyond the camera's draw distance.
@@ -119,11 +121,11 @@ One important thing to note is that Blender defines a different Coordinate syste
 
 # Connecting some physics
 
-I am running a physics engine off the main thread. I have written a little tool to allow me to pick out objects with which I would like physics applied and return references to them.
+In this demo I am running a verlet integration system in a seperate thread.
 
-Then in my render loop I can update the physics, import the position and rotation of the physics objects and apply them to their relation in the scene.
+Why?
 
-Note that I am rendering more detailed models and doing the physics on low detail models.
+Then in my render loop I can update the physics, import the position of the physics objects and apply them to their 3D counterparts.
 
 # Setting it up for VR
 

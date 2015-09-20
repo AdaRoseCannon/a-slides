@@ -9,7 +9,7 @@ function makeTextSprite( message, parameters ) {
 		parameters["fontface"] : "Arial";
 	
 	var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
-		parameters["borderThickness"] : 2;
+		parameters["borderThickness"] : 5;
 
 	var size = parameters.hasOwnProperty("size") ? 
 		parameters["size"] : 1;
@@ -27,8 +27,8 @@ function makeTextSprite( message, parameters ) {
 		context.lineWidth = borderThickness;
 
 		// text color
-		context.strokeStyle = "rgba(255, 255, 255, 1.0)";
-		context.fillStyle = "rgba(0, 0, 0, 1.0)";
+		context.strokeStyle = "rgba(0, 0, 0, 1.0)";
+		context.fillStyle = "rgba(255, 255, 255, 1.0)";
 	}
 
 	setStyle(context1);

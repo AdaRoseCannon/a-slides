@@ -42,6 +42,10 @@ class Verlet {
 		return workerMessage({action: 'addPoint', pointOptions});
 	}
 
+	connectPoints(p1, p2, constraintOptions) {
+		return workerMessage({action: 'connectPoints', options: {p1, p2, constraintOptions}});
+	}
+
 	reset() {
 		return workerMessage({action: 'reset'});
 	}

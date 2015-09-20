@@ -49,7 +49,7 @@ function MyVerlet(options) {
 
 	this.addPoint = options => {
 		const p = new VerletThreePoint(options);
-		p.id = this.points.push(p);
+		p.id = this.points.push(p) - 1;
 
 		// if a point is attractive add a pulling force
 		this.points.forEach(p0 => {
@@ -124,6 +124,12 @@ self.addEventListener('message', function(event) {
 						meta: p.meta,
 						id: p.id
 					}));
+					return;
+
+				case 'connectPoints':
+					const p1 = verlet.points[event.data.options.p1.id];
+					const p2 = verlet.points[event.data.options.p2.id];
+					verlet.connect(p1, p2, event.data.options.constraintOptions);
 					return;
 
 				case 'addPoint':
