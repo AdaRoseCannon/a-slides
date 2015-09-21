@@ -22,8 +22,6 @@ module.exports = function (...slides) {
 				appendTarget.innerHTML = !i ? '' : `<img src="${i}" style="object-fit: contain; width: 100%; height: 100%;" />`;
 				yield;
 			}
-
-			yield;
 		},
 		teardown() {
 

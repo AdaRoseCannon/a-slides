@@ -11,6 +11,7 @@ categories: SlideShow
 * WebVR info website - http://webvr.info/
 * Stereo Effect for THREE - https://github.com/mrdoob/three.js/blob/master/examples/js/effects/StereoEffect.js
 * Device Orientation Controller - https://github.com/richtr/threeVR 
+* THREE.js blender exporter - https://github.com/mrdoob/three.js/tree/master/utils/exporters/blender
 
 	</div>
 </div>

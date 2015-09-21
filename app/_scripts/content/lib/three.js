@@ -49,6 +49,7 @@ function MyThree(target = document.body){
 	const materials = {
 		shiny: new THREE.MeshLambertMaterial( { color: 0x99ff99, specular: 0x440000, envMap: reflectionCube, combine: THREE.MixOperation, reflectivity: 0.3, metal: true} ),
 		boring: new THREE.MeshLambertMaterial( { color: 0xFFFFFF, specular: 0x440000 } ),
+		boring2: new THREE.MeshLambertMaterial( { color: 0xFFFFFF, specular: 0x440000, shading: THREE.FlatShading } ),
 		wireframe: new THREE.MeshBasicMaterial( { color: 0xFFFFFF, wireframe: true } )
 	};
 	this.materials = materials;

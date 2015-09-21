@@ -3,7 +3,6 @@
  */
 
  const content = [
- 	null,
  	'./images/Jonny-Quest-the-real-adventures-of-jonny-quest.jpg',
  	'./images/accelerando.jpg',
  	'./images/neuromancer.jpg',

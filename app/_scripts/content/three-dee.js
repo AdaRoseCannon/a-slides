@@ -43,6 +43,8 @@ module.exports = {
 		this.appendChild(renderTarget);
 		const three = new MyThree(renderTarget);
 
+		window.three = three;
+
 		appendTarget.addMarkdown('`// Example Data Type`');
 
 		const grid = new THREE.GridHelper( 5, 1 );
@@ -114,8 +116,6 @@ module.exports = {
 			verlet.connectPoints(p2, p3, options);
 			verlet.connectPoints(p3, p1, options);
 		});
-
-		yield;
 
 		let v1 = new THREE.Vector3();
 		let v2 = new THREE.Vector3();
@@ -195,6 +195,12 @@ module.exports = {
 
 		bMesh.material = three.materials.boring;
 		yield;
+		
+		bMesh.material = three.materials.shiny;
+		yield;
+
+		bMesh.material = three.materials.boring;
+		yield;
 
 		directionalLight.position.set( -1, 1, 0 );
 		yield;
@@ -203,9 +209,6 @@ module.exports = {
 		yield;
 
 		directionalLight.position.set( 0, 1, -1 );
-		yield;
-
-		bMesh.material = three.materials.shiny;
 		yield;
 
 		three.useFog();

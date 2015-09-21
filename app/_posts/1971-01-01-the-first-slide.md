@@ -11,7 +11,23 @@ categories: SlideShow
 <div class="panel notes">
 	<div class="panel-heading">Notes</div>
 	<div class="panel-body marked">
-If you view the page on mobile you will see the notes,
-to view the slide view it on a large screen.
+# Intro
+
+When I was a child this was my favourite TV show:
+
+[Jonny Quest]
+
+The characters could travel to fully immersive worlds and have amazing adventures.
+
+and the love of virtual reality has stayed with me.
+
+Through numerous scifi books
+
+Movies
+
+and Anime
+
+reality is starting to catch up
+
 	</div>
 </div>

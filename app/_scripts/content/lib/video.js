@@ -22,8 +22,6 @@ module.exports = function (...slides) {
 				appendTarget.innerHTML = !i ? '' : `<video src="${i}" autoplay loop style="object-fit: contain; width: 100%; height: 100%;" />`;
 				yield;
 			}
-
-			yield;
 		},
 		teardown() {
 
