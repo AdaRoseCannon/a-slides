@@ -21,14 +21,7 @@ function MyThree(target = document.body){
 	camera.position.set(0, camera.height, 0);
 	camera.lookAt(new THREE.Vector3(0, camera.height, -9));
 	camera.rotation.y += Math.PI;
-	scene.add(camera); // so that objects attatched to the camera get rendered
 	this.camera = camera;
-
-	const hud = new THREE.Object3D();
-	hud.position.set(0, 0, -0.2);
-	hud.scale.set(0.02, 0.02, 0.02);
-	camera.add(hud);
-	this.hud = hud;
 
 	const renderer = new THREE.WebGLRenderer( { antialias: true } );
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -40,7 +33,7 @@ function MyThree(target = document.body){
 	target.appendChild(renderer.domElement);
 	this.domElement = renderer.domElement;
 
-	const ambientLight = new THREE.AmbientLight( 0x2B0680 );
+	const ambientLight = new THREE.AmbientLight( 0x666666 );
 	scene.add( ambientLight );
 
 	const path = "images/";
@@ -54,10 +47,11 @@ function MyThree(target = document.body){
 	reflectionCube.format = THREE.RGBFormat;
 
 	const materials = {
-		slime: new THREE.MeshLambertMaterial( { color: 0x99ff99, specular: 0x440000, envMap: reflectionCube, combine: THREE.MixOperation, reflectivity: 0.3, metal: true } ),
+		shiny: new THREE.MeshLambertMaterial( { color: 0x99ff99, specular: 0x440000, envMap: reflectionCube, combine: THREE.MixOperation, reflectivity: 0.3, metal: true} ),
 		boring: new THREE.MeshLambertMaterial( { color: 0xFFFFFF, specular: 0x440000 } ),
 		wireframe: new THREE.MeshBasicMaterial( { color: 0xFFFFFF, wireframe: true } )
 	};
+	this.materials = materials;
 
 	const physicsObjects = [];
 	const threeObjectsConnectedToPhysics = {};
@@ -150,8 +144,9 @@ function MyThree(target = document.body){
 		this.renderMethod.render(scene, camera);
 	};
 
-	this.useFog = (color, close, far) => {
-		scene.fog = new THREE.Fog(color || 0x7B6B03, close || 1, far || 40);
+	scene.fog = new THREE.Fog(0xff3399, 0.1, 100);
+	this.useFog = () => {
+		scene.fog.far = 11;
 		renderer.setClearColor( scene.fog.color );
 	};
 }

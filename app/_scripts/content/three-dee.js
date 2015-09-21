@@ -82,11 +82,12 @@ module.exports = {
 
 		appendTarget.addMarkdown('`p1 = { x:0, y:0, z:0 }`');
 
-		let p1;
+		let p1, p2, p3;
+		let s1, s2, s3;
 		makePoint()
 		.then(function (point) {
-			const s = textSprite(1);
-			three.connectPhysicsToThree(s, point);
+			s1 = textSprite(1);
+			three.connectPhysicsToThree(s1, point);
 			p1 = point;
 		});
 
@@ -98,13 +99,15 @@ module.exports = {
 		appendTarget.addMarkdown('`p3 = { x:0, y:3, z:0 }`');
 
 		Promise.all([makePoint(), makePoint()])
-		.then(function ([p2, p3]) {
+		.then(function ([ip2, ip3]) {
+			p2 = ip2;
+			p3 = ip3;
 			const options = {
 				stiffness: 0.2,
 				restingDistance: 3
 			};
-			const s2 = textSprite(2);
-			const s3 = textSprite(3);
+			s2 = textSprite(2);
+			s3 = textSprite(3);
 			three.connectPhysicsToThree(s2, p2);
 			three.connectPhysicsToThree(s3, p3);
 			verlet.connectPoints(p1, p2, options);
@@ -114,12 +117,67 @@ module.exports = {
 
 		yield;
 
+		let v1 = new THREE.Vector3();
+		let v2 = new THREE.Vector3();
+		let v3 = new THREE.Vector3();
+
 		// TODO: Add face
 		appendTarget.addMarkdown('`face = [p1, p2, p3]`');
 
+		const geometry = new THREE.Geometry();
+		geometry.vertices.push(v1, v2, v3);
+		geometry.faces.push(new THREE.Face3(0, 1, 2));
+		geometry.computeBoundingSphere();
+		geometry.computeFaceNormals();
+		geometry.dynamic = true;
+
+		const mesh = new THREE.Mesh(geometry, three.materials.boring);
+		three.scene.add(mesh);
+
+		const loader = new THREE.JSONLoader();
+		const bMesh = new THREE.Mesh(
+			loader.parse(require('../../models/bunny2.json').geometries[0].data).geometry,
+			three.materials.wireframe
+		);
+		bMesh.scale.set(2,2,2);
+		bMesh.rotation.set(-Math.PI/2,0,Math.PI);
+		const edges = new THREE.FaceNormalsHelper(bMesh, 0.1, 0x00ff00, 1);
+
+		const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		directionalLight.position.set( 1, 1, 0 );
+		three.scene.add( directionalLight );
+
+		function myAnim() {
+			three.scene.rotateY(0.02);
+			v1.copy(s1.position);
+			v2.copy(s2.position);
+			v3.copy(s3.position);
+			geometry.verticesNeedUpdate = true;
+			geometry.normalsNeedUpdate = true;
+			geometry.computeFaceNormals();
+			geometry.computeBoundingSphere();
+			edges.update();
+		}
+
+		three.on('prerender', myAnim);
+
 		yield;
 
-		// TODO: Show Normals
+
+		three.off('prerender', myAnim);
+		three.scene.rotation.y = 0;
+
+		three.scene.remove(s1);
+		three.scene.remove(s2);
+		three.scene.remove(s3);
+		three.scene.remove(mesh);
+
+		three.scene.add(bMesh);
+
+		yield;
+
+		window.edges = edges;
+		three.scene.add(edges);
 
 		// Not accurate my pretty verlet thing will make them equalateral
 		// Not right angle
@@ -127,15 +185,31 @@ module.exports = {
 		appendTarget.addMarkdown('`normal = { x:0, y:0, z:1 }`');
 		yield;
 
-		// TODO: Replace single face with model
-		// Remove text
-		// Show Model Skin
-		// MATERIALS
-		// remove wireframe
-		// LIGHTS
-		// Pan lights
-		// FOG
-		// Add Fog
+
+		three.scene.remove(edges);
+		three.on('prerender', function () {
+			three.scene.rotateY(0.02);
+		});
+
+		yield;
+
+		bMesh.material = three.materials.boring;
+		yield;
+
+		directionalLight.position.set( -1, 1, 0 );
+		yield;
+
+		directionalLight.position.set( 0, 1, 1 );
+		yield;
+
+		directionalLight.position.set( 0, 1, -1 );
+		yield;
+
+		bMesh.material = three.materials.shiny;
+		yield;
+
+		three.useFog();
+		yield;
 	},
 	teardown() {
 		cancelAnimationFrame(anim);
