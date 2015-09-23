@@ -26,9 +26,15 @@ Minimalist to encourage running own Javascript inside generators to control slid
  * Use scss examples: `app/_styles/_slide-splash.scss` & `app/_styles/_slide-global.scss`
  *  `app/_styles/_slides.scss` handles the transitioning handle with care.
 
+### Building
+ * `npm install`
+ * `npm install` -g gulp
+ * `gulp serve` to test
+ * `gulp build` to build
+
 ### Writing slide scripts
 
-* You can use commonjs and babel
+* You can use commonjs and ES6 via babel
 * Required for any dynamic slides
 * Annotated examples in `app/scripts/slides`
 * break up the slide actions using `yield` in the generator.
