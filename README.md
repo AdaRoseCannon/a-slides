@@ -28,7 +28,7 @@ Minimalist to encourage running own Javascript inside generators to control slid
 
 ### Building
  * `npm install`
- * `npm install` -g gulp
+ * `npm install -g gulp`
  * `gulp serve` to test
  * `gulp build` to build
 
