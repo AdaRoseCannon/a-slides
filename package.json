@@ -1,7 +1,7 @@
 {
   "name": "aslides",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A-Slides",
   "scripts": {
     "build:js": "webpack -d -p --optimize-dedupe",
