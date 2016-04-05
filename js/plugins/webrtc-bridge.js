@@ -159,7 +159,7 @@ module.exports = function ({peerSettings}) {
 			});
 		});
 
-		webRTCStatus = window.make.div();
+		webRTCStatus = document.createElement('div');
 		slideController.append(webRTCStatus);
 		webRTCStatus.classList.add('red');
 		webRTCStatus.classList.add('status');

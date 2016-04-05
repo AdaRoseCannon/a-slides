@@ -3,7 +3,7 @@
 // Render the slides markdown.
 module.exports = function ({slideContainer}) {
 	
-	const slideController = window.make.div();
+	const slideController = document.createElement('div');
 	slideController.classList.add('slide-controller');
 
 	const closeButton = document.createElement('a');
