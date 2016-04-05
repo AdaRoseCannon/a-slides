@@ -1,6 +1,6 @@
-'use strict';
+/* global $, $$ */
 
-require('./plugins/util-polyfills');
+'use strict';
 
 const slideSelector = slideId => `.slide[data-slide-id="${slideId}"] .panel.slide-content .panel-body`;
 
@@ -75,7 +75,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 
 	// e.g. click presses next etc etc
 	slideContainer.on('a-slides_trigger-event', function () {
-		if(this.currentEvents.next().done) {
+		if (this.currentEvents.next().done) {
 
 			// Wait a smidge before triggering the next slide.
 			this.nextSlideTimeOut = setTimeout(goToNextSlide, 10);
@@ -96,5 +96,15 @@ function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 	});
 
 }
+
+ASlide.prototype.plugins = {
+    deepLinking: require('./plugins/deep-linking'),
+    interactionKeyboard: require('./plugins/interaction-keyboard-mouse'),
+    interactionTouch: require('./plugins/interaction-touch'),
+    markdownTransform: require('./plugins/markdown'),
+    slideController: require('./plugins/slide-controller'),
+    bridgeServiceWorker: require('./plugins/sw-bridge'),
+    bridgeWebRTC: require('./plugins/webrtc-bridge'),
+};
 
 module.exports = ASlide;

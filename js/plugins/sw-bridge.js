@@ -1,6 +1,5 @@
 'use strict';
 
-require('./util-polyfills');
 const slideController = require('./slide-controller');
 
 module.exports = function ({slideContainer}) {

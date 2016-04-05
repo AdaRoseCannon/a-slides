@@ -1,6 +1,6 @@
-'use strict';
+/* global $ */
 
-require('./util-polyfills');
+'use strict';
 
 module.exports = function ({slideContainer}) {
 	if (location.hash) {

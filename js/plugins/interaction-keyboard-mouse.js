@@ -1,10 +1,8 @@
 'use strict';
 
-require('./util-polyfills');
-
 module.exports = function ({slideContainer}) {
 	window.addEventListener('keyup', e => {
-		switch(e.keyCode) {
+		switch (e.keyCode) {
 
 			// Left Arrow
 			case 37:

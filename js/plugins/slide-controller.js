@@ -1,11 +1,9 @@
 'use strict';
 
-require('./util-polyfills');
-
 // Render the slides markdown.
 module.exports = function ({slideContainer}) {
 	
-	let slideController = window.make.div();
+	const slideController = window.make.div();
 	slideController.classList.add('slide-controller');
 
 	const closeButton = document.createElement('a');

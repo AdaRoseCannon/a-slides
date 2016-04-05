@@ -1,0 +1,34 @@
+.slide {
+	font-family: 'Open Sans', helvetica, sans;
+	font-weight: 200;
+	box-shadow: 0 0 3em -1em black;
+	font-size: 24px;
+
+	h1 {
+		whitespace: nowrap;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: 300;
+	}
+
+	.slide-content {
+		background-color: white;
+		.panel-body {
+			height: 100%;
+		}
+	}
+
+	.panel.notes {
+		font-size: 80%;
+
+		p {
+			margin: 0.3em 0;
+		}
+	}
+}
+
+.small-text {
+	font-size: 6px;
+}
+

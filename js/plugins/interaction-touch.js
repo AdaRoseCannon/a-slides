@@ -1,7 +1,5 @@
 'use strict';
 
-require('./util-polyfills');
-
 const Hammer = require('hammerjs');
 
 module.exports = function (config) {

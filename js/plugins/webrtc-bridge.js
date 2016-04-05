@@ -1,6 +1,5 @@
 'use strict';
 
-require('./util-polyfills');
 const slideController = require('./slide-controller');
 const EventEmitter = require('events').EventEmitter;
 const Peer = require('peerjs');
@@ -8,8 +7,8 @@ const MASTER_CONTROLLER_NAME = 'ada-slides-controller';
 
 // Define peerJS Details
 
-var myPeer; // Peer
-var webRTCStatus; // Status box
+let myPeer; // Peer
+let webRTCStatus; // Status box
 
 function webRTCSetup({peerSettings, peerController, slideContainer}) {
 
