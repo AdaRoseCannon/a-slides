@@ -20,7 +20,7 @@ module.exports = {
 		'./js/index.js'	
 	],
     output: {
-        library: 'A-Slides',
+        library: 'ASlides',
         libraryTarget: 'umd',
         path: path.join(__dirname, 'build'),
 		filename: 'a-slides.js'
