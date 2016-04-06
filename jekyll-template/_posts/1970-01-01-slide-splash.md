@@ -3,8 +3,8 @@ layout: slide
 categories: SlideShow
 ---
 
-<div class="panel slide-content">
-<div class="panel-body marked">
+<div class="slide-content">
+<div class="marked">
 # {{ site.name }}
 ## {{ site.description }}
 <div class="author-card">
@@ -14,9 +14,9 @@ categories: SlideShow
 </div>
 </div>
 </div>
-<div class="panel notes">
-<div class="panel-heading">Notes</div>
-<div class="panel-body marked">
+<div class="notes">
+<div class="heading">Notes</div>
+<div class="marked">
 * Hi, I'm Ada Rose from FTLabs
 
 Aim to cover rendering and animation performance.

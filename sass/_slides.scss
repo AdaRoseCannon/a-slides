@@ -77,7 +77,7 @@ $slide-margin: 1em;
 		transform: translateX(100%) translateX(2 * $slide-margin) translateZ(-50px) rotateY(10deg);
 	}
 
-	> .panel {
+	> * {
 
 		box-sizing: border-box;
 		position: absolute;

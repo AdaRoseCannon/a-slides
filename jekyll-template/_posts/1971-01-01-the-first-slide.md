@@ -6,14 +6,14 @@ author: Ada Rose Edwards
 slideId: the-first-slide
 ---
 
-<div class="panel slide-content">
-	<div class="panel-body marked">
+<div class="slide-content">
+	<div class="marked">
 ## This is the first slide
 	</div>
 </div>
-<div class="panel notes">
-	<div class="panel-heading">Notes</div>
-	<div class="panel-body marked">
+<div class="notes">
+	<div class="heading">Notes</div>
+	<div class="marked">
 If you view the page on mobile you will see the notes,
 to view the slide view it on a large screen.
 	</div>
