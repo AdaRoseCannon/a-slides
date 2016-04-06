@@ -2,7 +2,7 @@
 
 'use strict';
 
-const slideSelector = slideId => `.slide[data-slide-id="${slideId}"] .panel.slide-content .panel-body`;
+const slideSelector = slideId => `.slide[data-slide-id="${slideId}"] .slide-content`;
 
 // Setup document listeners and event handlers
 function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
