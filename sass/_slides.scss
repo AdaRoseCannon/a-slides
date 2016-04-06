@@ -95,7 +95,7 @@ $slide-margin: 1em;
 				font-size: 1.5em;
 			}
 			overflow: hidden;
-
+			margin: 0;
 			transition: transform ease 0.5s, box-shadow ease 0.5s;
 			transform: scale(0.4) translate(-1em, -1em);
 			transform-origin: bottom right;
@@ -103,13 +103,14 @@ $slide-margin: 1em;
 			z-index: 1;
 		}
 
-		&.notes {
+		&.a-slides_notes {
 			background: white;
 			padding: 1em 1em 40% 1em;
 			overflow: auto;
 			font-size: 1.5em;
 			opacity: 1;
 			transition:opacity ease 0.5s;
+			margin: 0;
 		}
 
 		.a-slides_slide-container.hide-presentation & {
@@ -127,7 +128,7 @@ $slide-margin: 1em;
 				box-shadow: 0 0 1em -1em black;
 			}
 
-			&.notes {
+			&.a-slides_notes {
 				opacity: 0;
 			}
 		}
