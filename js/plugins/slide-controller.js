@@ -4,12 +4,12 @@
 module.exports = function ({slideContainer}) {
 	
 	const slideController = document.createElement('div');
-	slideController.classList.add('slide-controller');
+	slideController.classList.add('a-slides_slide-controller');
 
 	const closeButton = document.createElement('a');
 	closeButton.innerHTML = '×';
 	closeButton.on('click', () => slideController.classList.add('hidden'));
-	closeButton.classList.add('slide-controller_close-button');
+	closeButton.classList.add('a-slides_slide-controller_close-button');
 	slideController.appendChild(closeButton);
 
 	function append(el) {
