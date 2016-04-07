@@ -20,7 +20,6 @@ $slide-margin: 1em;
 	background-color: white;
 	box-shadow: 0 0 2em -0.5em black;
 	border-radius: 0 0 0.5em 0.5em;
-    font-family: sans;
     max-width: 100%;
     display: flex;
     justify-content: space-around;
@@ -52,7 +51,6 @@ $slide-margin: 1em;
 }
 
 .a-slides_slide {
-	background: white;
 	margin: 1em $slide-margin 0 $slide-margin;
 	width: calc(100% - #{2 * $slide-margin});
 	height: calc(100% - 5em);
@@ -91,9 +89,6 @@ $slide-margin: 1em;
 
 		&.a-slides_slide-content {
 			padding: 1em;
-			&, & pre, & li {
-				font-size: 1.5em;
-			}
 			overflow: hidden;
 			margin: 0;
 			transition: transform ease 0.5s, box-shadow ease 0.5s;
@@ -104,10 +99,8 @@ $slide-margin: 1em;
 		}
 
 		&.a-slides_notes {
-			background: white;
 			padding: 1em 1em 40% 1em;
 			overflow: auto;
-			font-size: 1.5em;
 			opacity: 1;
 			transition:opacity ease 0.5s;
 			margin: 0;
