@@ -17,7 +17,6 @@
   background-color: white;
   box-shadow: 0 0 2em -0.5em black;
   border-radius: 0 0 0.5em 0.5em;
-  font-family: sans;
   max-width: 100%;
   display: flex;
   justify-content: space-around;
@@ -40,7 +39,6 @@
     padding: 0 0.5em; }
 
 .a-slides_slide {
-  background: white;
   margin: 1em 1em 0 1em;
   width: calc(100% - 2em);
   height: calc(100% - 5em);
@@ -77,13 +75,9 @@
       transform-origin: bottom right;
       box-shadow: 0 0 3em -0.5em black;
       z-index: 1; }
-      .a-slides_slide > *.a-slides_slide-content, .a-slides_slide > *.a-slides_slide-content pre, .a-slides_slide > *.a-slides_slide-content li {
-        font-size: 1.5em; }
     .a-slides_slide > *.a-slides_notes {
-      background: white;
       padding: 1em 1em 40% 1em;
       overflow: auto;
-      font-size: 1.5em;
       opacity: 1;
       transition: opacity ease 0.5s;
       margin: 0; }
