@@ -95,22 +95,3 @@
       box-shadow: 0 0 1em -1em black; }
     .a-slides_slide-container.presentation .a-slides_slide > *.a-slides_notes {
       opacity: 0; }
-
-.a-slides_slide {
-  font-family: 'Open Sans', helvetica, sans;
-  font-weight: 200;
-  box-shadow: 0 0 3em -1em black;
-  font-size: 24px; }
-  .a-slides_slide h1 {
-    whitespace: nowrap; }
-  .a-slides_slide h1, .a-slides_slide h2, .a-slides_slide h3, .a-slides_slide h4, .a-slides_slide h5, .a-slides_slide h6 {
-    font-weight: 300; }
-  .a-slides_slide .a-slides_slide-content {
-    background-color: white; }
-  .a-slides_slide .a-slides_notes {
-    font-size: 80%; }
-    .a-slides_slide .a-slides_notes p {
-      margin: 0.3em 0; }
-
-.small-text {
-  font-size: 6px; }
