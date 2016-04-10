@@ -5,7 +5,7 @@
 const slideSelector = slideId => `.a-slides_slide[data-slide-id="${slideId}"] .a-slides_slide-content`;
 
 // Setup document listeners and event handlers
-function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
+function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) {
 
 	const setupSlide = function setupSlide(slideId) {
 
@@ -85,6 +85,8 @@ function ASlide(slideData, {plugins = [], slideContainer = document} = {}) {
 	slideContainer.on('a-slides_next-slide', () => goToNextSlide());
 	slideContainer.on('a-slides_previous-slide', () => goToPrevSlide());
 	slideContainer.on('a-slides_goto-slide', e => goToSlide(e.detail));
+
+	slideContainer.on('scroll', () => slideContainer.scrollLeft = 0);
 
 	plugins.forEach(plugin => {
 		if (typeof plugin === 'function') {
