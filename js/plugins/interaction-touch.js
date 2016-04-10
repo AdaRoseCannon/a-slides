@@ -14,7 +14,7 @@ module.exports = function (config) {
 		}
 
 		if (config.use.indexOf('swipe-back') !== -1) {
-			touches.on('swiperight', () => slideContainer.fire('a-slides_previous-slide'));	
+			touches.on('swiperight', () => slideContainer.fire('a-slides_previous-slide'));
 		}
 	};
 

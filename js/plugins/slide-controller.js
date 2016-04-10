@@ -2,7 +2,7 @@
 
 // Render the slides markdown.
 module.exports = function ({slideContainer}) {
-	
+
 	const slideController = document.createElement('div');
 	slideController.classList.add('a-slides_slide-controller');
 

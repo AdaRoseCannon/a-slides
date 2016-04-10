@@ -6,12 +6,14 @@ module.exports = function ({slideContainer}) {
 
 			// Left Arrow
 			case 37:
+			case 33:
 				slideContainer.fire('a-slides_previous-slide');
 				break;
 
 			// Right Arrow
 			case 13:
 			case 39:
+			case 34:
 				slideContainer.fire('a-slides_trigger-event');
 				break;
 

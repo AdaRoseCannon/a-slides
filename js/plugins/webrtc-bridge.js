@@ -61,6 +61,12 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 				console.log('Triggering remote interaction event');
 				this.sendSignalToClients('triggerEvent');
 			}
+
+			// Tell all of the clients to move on one event
+			triggerRefresh() {
+				console.log('Triggering refresh');
+				this.sendSignalToClients('triggerRefresh');
+			}
 		}
 		let user = new WebrtcUser(!!peerController);
 
@@ -90,8 +96,10 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 
 		slideContainer.on('a-slides_slide-setup', ({detail: {slideId}}) =>  user.requestSlide.bind(user)(slideId));
 		slideContainer.on('a-slides_trigger-event', () => user.triggerRemoteEvent.bind(user)());
+		slideContainer.on('a-slides_refresh-slide', () => user.triggerRefresh.bind(user)());
 		user.on('goToSlide', slide => slideContainer.fire('a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${slide}"]`)}));
 		user.on('triggerEvent', () => slideContainer.fire('a-slides_trigger-event'));
+		user.on('triggerRefresh', () => slideContainer.fire('a-slides_refresh-slide'));
 
 		// Further Event Handling
 		myPeer.on('error', e => {

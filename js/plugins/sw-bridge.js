@@ -39,20 +39,20 @@ module.exports = function ({slideContainer}) {
 		if (navigator.serviceWorker.controller) {
 
 			/**
-			 * Set up bindings 
+			 * Set up bindings
 			 */
 
-			slideController.makeAndBindButton('SW Parent', function () {
-				slideContainer.on('a-slides_slide-setup', ({detail}) => sendSWMessage(detail));
+			slideController.makeAndBindButton('Parent', function () {
+				slideContainer.on('a-slides_slide-setup', ({detail}) =>  sendSWMessage(detail));
 				slideContainer.on('a-slides_trigger-event', () => sendSWMessage({
 					triggerEvent: true
 				}));
 			});
 
-			slideController.makeAndBindButton('SW Child', function () {
+			slideController.makeAndBindButton('Child', function () {
 
 				window.addEventListener('message', function (e) {
-					if (e.data.triggerEvent) {
+					if(e.data.triggerEvent) {
 						slideContainer.fire('a-slides_trigger-event');
 					}
 					if (e.data.detail) {

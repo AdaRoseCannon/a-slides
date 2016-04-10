@@ -7,6 +7,8 @@ const slideSelector = slideId => `.a-slides_slide[data-slide-id="${slideId}"] .a
 // Setup document listeners and event handlers
 function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) {
 
+	let noEvents = 0;
+
 	const setupSlide = function setupSlide(slideId) {
 
 		location.hash = slideId;
@@ -24,6 +26,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		}
 
 		this.currentEvents = slideData[slideId].action.bind(slideContainer.$(slideSelector(slideId)))();
+		noEvents = 0;
 
 		// if a go to new slide is already triggered then cancel it so
 		// we don't accidentially go to the wrong slide.
@@ -64,6 +67,11 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	}
 
 	function goToPrevSlide() {
+
+		if (noEvents) {
+			slideContainer.fire('a-slides_refresh-slide');
+			return;
+		}
 		goToSlide({slide: $('.a-slides_slide.active').prevAll().length - 1});
 	}
 
@@ -75,6 +83,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 	// e.g. click presses next etc etc
 	slideContainer.on('a-slides_trigger-event', function () {
+		noEvents++;
 		if (this.currentEvents.next().done) {
 
 			// Wait a smidge before triggering the next slide.
@@ -82,6 +91,13 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		}
 	}.bind(this));
 
+	function refreshSlide() {
+		const id = $('.slide.active').dataset.slideId;
+		teardownSlide(id);
+		setupSlide(id);
+	}
+
+	slideContainer.on('a-slides_refresh-slide', () => refreshSlide());
 	slideContainer.on('a-slides_next-slide', () => goToNextSlide());
 	slideContainer.on('a-slides_previous-slide', () => goToPrevSlide());
 	slideContainer.on('a-slides_goto-slide', e => goToSlide(e.detail));
