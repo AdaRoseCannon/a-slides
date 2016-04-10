@@ -92,7 +92,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	}.bind(this));
 
 	function refreshSlide() {
-		const id = $('.slide.active').dataset.slideId;
+		const id = $('.a-slides_slide.active').dataset.slideId;
 		teardownSlide(id);
 		setupSlide(id);
 	}
