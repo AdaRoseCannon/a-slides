@@ -7,7 +7,7 @@ module.exports = function ({slideContainer}) {
 
 		const slide = $(`.a-slides_slide[data-slide-id="${location.hash.slice(1)}"]`);
 
-		// Find the slide the hash to simulate deeplinking
+		// Find the slide with the hash to simulate deeplinking
 		if (slide) {
 			slideContainer.fire('a-slides_goto-slide', {slide});
 		}

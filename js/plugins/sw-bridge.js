@@ -42,23 +42,24 @@ module.exports = function ({slideContainer}) {
 			 * Set up bindings
 			 */
 
+			let controller = false;
+
 			slideController.makeAndBindButton('Parent', function () {
-				slideContainer.on('a-slides_slide-setup', ({detail}) =>  sendSWMessage(detail));
+				controller = true;
+				slideContainer.on('a-slides_slide-setup', ({detail}) => sendSWMessage(detail));
 				slideContainer.on('a-slides_trigger-event', () => sendSWMessage({
 					triggerEvent: true
 				}));
 			});
 
-			slideController.makeAndBindButton('Child', function () {
-
-				window.addEventListener('message', function (e) {
-					if(e.data.triggerEvent) {
-						slideContainer.fire('a-slides_trigger-event');
-					}
-					if (e.data.detail) {
-						slideContainer.fire('a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${e.data.slideId}"]`)});
-					}
-				});
+			window.addEventListener('message', function (e) {
+				if (controller) return;
+				if (e.data.triggerEvent) {
+					slideContainer.fire('a-slides_trigger-event');
+				}
+				if (e.data.detail) {
+					slideContainer.fire('a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${e.data.slideId}"]`)});
+				}
 			});
 		}
 	}
