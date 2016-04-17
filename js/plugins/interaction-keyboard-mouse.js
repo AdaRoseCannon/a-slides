@@ -17,6 +17,11 @@ module.exports = function ({slideContainer}) {
 				slideContainer.fire('a-slides_trigger-event');
 				break;
 
+			case 66:
+			case 70:
+				slideContainer.classList.toggle('presentation');
+				break;
+
 			case 27:
 				slideContainer.classList.remove('presentation');
 				break;
