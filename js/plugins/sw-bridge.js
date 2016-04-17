@@ -52,7 +52,7 @@ module.exports = function ({slideContainer}) {
 				}));
 			});
 
-			window.addEventListener('message', function (e) {
+			navigator.serviceWorker.addEventListener('message', function (e) {
 				if (controller) return;
 				if (e.data.triggerEvent) {
 					slideContainer.fire('a-slides_trigger-event');
