@@ -72,7 +72,9 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			slideContainer.fire('a-slides_refresh-slide');
 			return;
 		}
-		goToSlide({slide: $('.a-slides_slide.active').prevAll().length - 1});
+
+		// Wait a smidge before changing slides.
+		this.nextSlideTimeOut = setTimeout(() => goToSlide({slide: $('.a-slides_slide.active').prevAll().length - 1}), 10);
 	}
 
 	this.currentEvents = {
