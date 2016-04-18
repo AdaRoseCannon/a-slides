@@ -46,19 +46,20 @@ module.exports = function ({slideContainer}) {
 
 			slideController.makeAndBindButton('Parent', function () {
 				controller = true;
-				slideContainer.on('a-slides_slide-setup', ({detail}) => sendSWMessage(detail));
-				slideContainer.on('a-slides_trigger-event', () => sendSWMessage({
-					triggerEvent: true
+				slideContainer.on('a-slides_slide-setup', ({detail}) => sendSWMessage({
+					aSlideEvent: 'a-slides_goto-slide',
+					detail: {
+						slide: slideContainer.$(`.a-slides_slide[data-slide-id="${detail.slideId}"]`).prevAll().length
+					}
 				}));
+				slideContainer.on('a-slides_trigger-event', () => sendSWMessage({aSlideEvent: 'a-slides_trigger-event'}));
+				slideContainer.on('a-slides_previous-slide', () => sendSWMessage({aSlideEvent: 'a-slides_previous-slide'}));
 			});
 
 			navigator.serviceWorker.addEventListener('message', function (e) {
 				if (controller) return;
-				if (e.data.triggerEvent) {
-					slideContainer.fire('a-slides_trigger-event');
-				}
-				if (e.data.detail) {
-					slideContainer.fire('a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${e.data.slideId}"]`)});
+				if (e.data.aSlideEvent) {
+					slideContainer.fire(e.data.aSlideEvent, e.data.detail);
 				}
 			});
 		}
