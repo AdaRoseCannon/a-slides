@@ -46,7 +46,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 	// Slide is a dom element or an integer
 	function goToSlide({slide}) {
-		const newSlide = typeof slide === "number" ? $$('.a-slides_slide')[slide] : slide;
+		const newSlide = typeof slide === 'number' ? $$('.a-slides_slide')[slide] : slide;
 		if (!newSlide) return;
 		const newSlideId = newSlide.dataset.slideId;
 		const oldSlide = $('.a-slides_slide.active');
@@ -66,7 +66,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		goToSlide({slide: $('.a-slides_slide.active').prevAll().length + 1});
 	}
 
-	function goToPrevSlide() {
+	const goToPrevSlide = () => {
 
 		if (noEvents) {
 			slideContainer.fire('a-slides_refresh-slide');
@@ -74,8 +74,8 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		}
 
 		// Wait a smidge before changing slides.
-		this.nextSlideTimeOut = setTimeout(() => goToSlide({slide: $('.a-slides_slide.active').prevAll().length - 1}), 10);
-	}
+		slideContainer.nextSlideTimeOut = setTimeout(() => goToSlide({slide: $('.a-slides_slide.active').prevAll().length - 1}), 10);
+	};
 
 	this.currentEvents = {
 		next() {

@@ -59,9 +59,13 @@ $slide-margin: 1em;
 	position: absolute;
 	top: 0;
 	left: 0;
-	transition: transform 1.5s cubic-bezier(0.030, 0.200, 0.360, 1.210);
+	transition: transform 1ms cubic-bezier(0.030, 0.200, 0.360, 1.210);
 	transform: translateX(-100%) translateX(-2 * $slide-margin) translateZ(-50px) rotateY(-10deg);
 	box-sizing: border-box;
+
+	.a-slides_slide-container.presentation & {
+		transition: transform 1.5s cubic-bezier(0.030, 0.200, 0.360, 1.210);
+	}
 
 	img {
 		max-width: 100%;

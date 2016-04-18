@@ -47,9 +47,11 @@
   position: absolute;
   top: 0;
   left: 0;
-  transition: transform 1.5s cubic-bezier(0.03, 0.2, 0.36, 1.21);
+  transition: transform 1ms cubic-bezier(0.03, 0.2, 0.36, 1.21);
   transform: translateX(-100%) translateX(-2em) translateZ(-50px) rotateY(-10deg);
   box-sizing: border-box; }
+  .a-slides_slide-container.presentation .a-slides_slide {
+    transition: transform 1.5s cubic-bezier(0.03, 0.2, 0.36, 1.21); }
   .a-slides_slide img {
     max-width: 100%; }
   .a-slides_slide.active {
