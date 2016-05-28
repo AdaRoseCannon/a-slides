@@ -15,9 +15,10 @@ An example site is in [https://github.com/AdaRoseEdwards/a-slides/tree/master/je
 it has two methods of creating slide content:
 
 * Single page blog post which becomes a slide deck at the push of a button, in which blockquotes get treated as slides and the text around them becomes speakers notes.
-.* [Demo]() [Source]()
+.* [Source](https://github.com/AdaRoseEdwards/a-slides/blob/master/jekyll-template/demo-single-page-progressive-slide-deck.md)
 * Each Jekyll post is a treated as a slide in the slide deck.
-.* [Demo]() [Source]()
+.* [Source, part1 index.html](https://github.com/AdaRoseEdwards/a-slides/blob/master/jekyll-template/demo-slide-from-posts.html)
+.* [Source, part2 the posts directory](https://github.com/AdaRoseEdwards/a-slides/tree/master/jekyll-template/_posts)
 
 ## on it's own
 
@@ -49,11 +50,21 @@ it has two methods of creating slide content:
 ## Initialising
 
 ```javascript
-	const slideData = [];
-	const slideContainer = document.querySelector('.a-slides_slide-container');
+
+	const slideData = {'slide-id': {
+		setup() {},
+		action: function *() {
+			this.appendChild(window.MAKE.markdown('# Hello'));
+			yield;
+			this.appendChild(window.MAKE.markdown('# World'));
+		},
+		teardown: {
+			this.innerHTML = '';
+		}
+	}};
 
 	new ASlides(slideData, {
-		slideContainer,
+		slideContainer: document.querySelector('.a-slides_slide-container'),
 		plugins: [
 			ASlides.prototype.plugins.markdownTransform, // needs to be run first
 			ASlides.prototype.plugins.slideController, // needs to be run before buttons are added to it.
@@ -126,6 +137,30 @@ it has two methods of creating slide content:
 * bridgeWebRTC:
 .* Uses the peer.js library to connect to and control another client via WebRTC. Requires an existing peer.js signaling server.
 
+## Animating slides
+
+Slide animations are defined as such:
+```
+{'slide-id': {
+	setup() {},
+	action: function *() {
+		this.appendChild(window.MAKE.markdown('# Hello'));
+		yield;
+		this.appendChild(window.MAKE.markdown('# World'));
+	},
+	teardown: {
+		this.innerHTML = '';
+	}
+}}
+```
+
+* Animations are defined as generators, when the yeild whenever you are awaiting an input from the presenter.
+* setup is run and action are run when the slide is being moved into position.
+* action's next() is called repeatedly with each input.
+* teardown() is called after the slide has been hidden
+* resetting a slide will run teardown() and reinitialise action()
+* for a complex example see: https://github.com/AdaRoseEdwards/progressive-web-apps-talk/blob/gh-pages/scripts/content/LoaPN.js
+
 ## Events
 
 ```javascript
@@ -140,5 +175,5 @@ Todo
 
 # Styling
 
-Example SCSS file: jekyll-template/styles/slides.scss
+Example SCSS file: [jekyll-template/styles/slides.scss](https://github.com/AdaRoseEdwards/a-slides/blob/master/jekyll-template/styles/slides.scss)
 
