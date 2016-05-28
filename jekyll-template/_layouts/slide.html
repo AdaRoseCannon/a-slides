@@ -2,7 +2,7 @@
 <html lang="">
 	{% include head.html %}
 	<body>
-		<div class="slide-container">
+		<div class="a-slides_slide-container">
 			<div class="slide" data-slide-id="{{ page.slideId }}">
 				{{ content }}
 			</div>
@@ -10,6 +10,8 @@
 		<footer>
 			{% include footer.html %}
 		</footer>
-	<script src="{{page.prefix}}scripts/main.js"></script>
+		<script src="https://cdn.rawgit.com/AdaRoseEdwards/dirty-dom/v1.3.1/build/dirty-dom-lib.min.js"></script>
+		<script src="{{ site.aslide }}/a-slides.js"></script>
+		<script src="{{page.prefix}}scripts/slides.js"></script>
 	</body>
 </html>

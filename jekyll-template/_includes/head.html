@@ -3,11 +3,18 @@
 	<meta name="description" content="">
 	<link rel="icon" type="image/ico" href="favicon.ico">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densitydpi=device-dpi, user-scalable=no, minimal-ui" />
-	<link rel="icon" sizes="192x192" href="images/launcher-icon-4x.png">
+	<link rel="icon" sizes="192x192" href="launcher-icon-4x.png">
 	<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin>
-	<link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600,800' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Lato:900' rel='stylesheet' type='text/css'>
+	<link rel="manifest" href="{{page.prefix}}manifest.json">
 	<title>{{ page.title }}</title>
+	{% if page.image %}
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:image" content="{{ page.image }}">
+	{% else %}
 	<meta name="twitter:card" content="summary">
+	{% endif %}
 	<meta name="twitter:site" content="@{{ site.author.twitter }}">
 	<meta name="twitter:creator" content="@{{ site.author.twitter }}">
 	{% if page.title %}
@@ -23,10 +30,20 @@
 	{% else %}
 	  <meta name="twitter:description" content="{{ site.description }}">
 	{% endif %}
-	<!-- build:css {{ post.prefix }}styles/compiled.css -->
-	<link rel="stylesheet" href="styles/bootstrap.min.css">
-	<link rel="stylesheet" href="styles/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="styles/main.css">
-	<!-- endbuild -->
-
+	<link rel="stylesheet" href="{{ site.aslide }}/a-slides.css">
+	<link rel="stylesheet" href="{{page.prefix}}styles/slides.css">
+	<link rel="stylesheet" href="{{page.prefix}}styles/post.css">
+	<link rel="stylesheet" href="{{page.prefix}}styles/highlight.css">
+	{% if page.script %}
+	<script src="{{page.script}}"></script>
+	{% endif %}
+	{% if page.script1 %}
+	<script src="{{page.script1}}"></script>
+	{% endif %}
+	{% if page.script2 %}
+	<script src="{{page.script2}}"></script>
+	{% endif %}
+	{% if page.script3 %}
+	<script src="{{page.script3}}"></script>
+	{% endif %}
 </head>
