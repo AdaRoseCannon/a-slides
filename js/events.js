@@ -31,7 +31,7 @@ module.exports = {
 	},
 
 	fire(node, name, detail = {}) {
-		this.dispatchEvent(new CustomEvent(name, {detail}));
-		return this;
+		node.dispatchEvent(new CustomEvent(name, {detail}));
+		return node;
 	}
 };
