@@ -1,8 +1,8 @@
 'use strict';
 
 const slideController = require('./slide-controller');
-
-const { fire, on } = require('events');
+const prevAll = require('../prev-all');
+const { fire, on } = require('../events');
 
 module.exports = function ({slideContainer}) {
 
@@ -51,7 +51,7 @@ module.exports = function ({slideContainer}) {
 				on(slideContainer, 'a-slides_slide-setup', ({detail}) => sendSWMessage({
 					aSlideEvent: 'a-slides_goto-slide',
 					detail: {
-						slide: slideContainer.$(`.a-slides_slide[data-slide-id="${detail.slideId}"]`).prevAll().length
+						slide: prevAll(slideContainer.querySelector(`.a-slides_slide[data-slide-id="${detail.slideId}"]`)).length
 					}
 				}));
 				on(slideContainer, 'a-slides_trigger-event', () => sendSWMessage({aSlideEvent: 'a-slides_trigger-event'}));

@@ -4,7 +4,7 @@ const slideController = require('./slide-controller');
 const EventEmitter = require('events').EventEmitter;
 const Peer = require('peerjs');
 const MASTER_CONTROLLER_NAME = 'ada-slides-controller';
-const { fire, on } = require('events');
+const { fire, on } = require('../events');
 
 // Define peerJS Details
 

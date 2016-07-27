@@ -1,6 +1,7 @@
 'use strict';
 
 const Hammer = require('hammerjs');
+const {fire} = require('../events');
 
 module.exports = function (config) {
 
@@ -10,11 +11,11 @@ module.exports = function (config) {
 		touches.set({ direction: Hammer.DIRECTION_HORIZONTAL });
 
 		if (config.use.indexOf('swipe-forward') !== -1) {
-			touches.on('swipeleft', () => slideContainer.fire('a-slides_next-slide'));
+			touches.on('swipeleft', () => fire(slideContainer, 'a-slides_next-slide'));
 		}
 
 		if (config.use.indexOf('swipe-back') !== -1) {
-			touches.on('swiperight', () => slideContainer.fire('a-slides_previous-slide'));
+			touches.on('swiperight', () => fire(slideContainer, 'a-slides_previous-slide'));
 		}
 	};
 

@@ -1,7 +1,8 @@
 'use strict';
 
 const slideSelector = slideId => `.a-slides_slide[data-slide-id="${slideId}"] .a-slides_slide-content`;
-const { fire, on, once, off } = require('events');
+const { fire, on, once, off } = require('./events');
+const prevAll = require('./prev-all');
 
 // Setup document listeners and event handlers
 function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) {
@@ -62,7 +63,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	}
 
 	function goToNextSlide() {
-		goToSlide({slide: slideContainer.querySelector('.a-slides_slide.active').prevAll().length + 1});
+		goToSlide({slide: prevAll(slideContainer.querySelector('.a-slides_slide.active')).length + 1});
 	}
 
 	const goToPrevSlide = () => {
@@ -73,7 +74,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		}
 
 		// Wait a smidge before changing slides.
-		slideContainer.nextSlideTimeOut = setTimeout(() => goToSlide({slide: slideContainer.querySelector('.a-slides_slide.active').prevAll().length - 1}), 10);
+		slideContainer.nextSlideTimeOut = setTimeout(() => goToSlide({slide: prevAll(slideContainer.querySelector('.a-slides_slide.active')).length - 1}), 10);
 	};
 
 	this.currentEvents = {

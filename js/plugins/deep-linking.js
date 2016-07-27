@@ -1,6 +1,6 @@
 'use strict';
 
-const { fire } = require('events');
+const { fire } = require('../events');
 
 module.exports = function ({slideContainer}) {
 	if (location.hash) {

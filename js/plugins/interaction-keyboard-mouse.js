@@ -1,6 +1,6 @@
 'use strict';
 
-const { fire, on } = require('events');
+const { fire, on } = require('../events');
 
 module.exports = function ({slideContainer}) {
 	window.addEventListener('keyup', e => {
