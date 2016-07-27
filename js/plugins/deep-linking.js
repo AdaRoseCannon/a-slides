@@ -1,5 +1,7 @@
 'use strict';
 
+const { fire } = require('events');
+
 module.exports = function ({slideContainer}) {
 	if (location.hash) {
 
@@ -7,11 +9,11 @@ module.exports = function ({slideContainer}) {
 
 		// Find the slide with the hash to simulate deeplinking
 		if (slide) {
-			slideContainer.fire('a-slides_goto-slide', {slide});
+			fire(slideContainer, 'a-slides_goto-slide', {slide});
 		}
 
 		slideContainer.scrollLeft = 0;
 	} else {
-		slideContainer.fire('a-slides_goto-slide', {slide: 0});
+		fire(slideContainer, 'a-slides_goto-slide', {slide: 0});
 	}
 };

@@ -1,6 +1,7 @@
 'use strict';
 
 const slideSelector = slideId => `.a-slides_slide[data-slide-id="${slideId}"] .a-slides_slide-content`;
+const { fire, on, once, off } = require('events');
 
 // Setup document listeners and event handlers
 function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) {
@@ -11,7 +12,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 		location.hash = slideId;
 
-		slideContainer.fire('a-slides_slide-setup', {slideId});
+		fire(slideContainer, 'a-slides_slide-setup', {slideId});
 
 		if (slideData[slideId]) {
 			slideData[slideId].setup.bind(slideContainer.$(slideSelector(slideId)))();
@@ -36,7 +37,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 	function teardownSlide(slideId) {
 
-		slideContainer.fire('a-slides_slide-teardown', {slideId});
+		fire(slideContainer, 'a-slides_slide-teardown', {slideId});
 		if (slideData[slideId]) {
 			slideData[slideId].teardown.bind(slideContainer.$(slideSelector(slideId)))();
 		}
@@ -51,9 +52,9 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		if (newSlide && newSlide !== oldSlide) {
 			if (oldSlide) {
 				oldSlide.classList.remove('active');
-				oldSlide.once('transitionend', () => teardownSlide(oldSlide.dataset.slideId));
+				once(oldSlide, 'transitionend', () => teardownSlide(oldSlide.dataset.slideId));
 			}
-			newSlide.off('transitionend');
+			off(newSlide, 'transitionend');
 			newSlide.classList.add('active');
 			teardownSlide(newSlideId);
 			setupSlide(newSlideId);
@@ -67,7 +68,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	const goToPrevSlide = () => {
 
 		if (noEvents) {
-			slideContainer.fire('a-slides_refresh-slide');
+			fire(slideContainer, 'a-slides_refresh-slide');
 			return;
 		}
 
@@ -82,7 +83,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	};
 
 	// e.g. click presses next etc etc
-	slideContainer.on('a-slides_trigger-event', function () {
+	on(slideContainer, 'a-slides_trigger-event', function () {
 		noEvents++;
 		if (this.currentEvents.next().done) {
 
@@ -97,12 +98,12 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		setupSlide(id);
 	}
 
-	slideContainer.on('a-slides_refresh-slide', () => refreshSlide());
-	slideContainer.on('a-slides_next-slide', () => goToNextSlide());
-	slideContainer.on('a-slides_previous-slide', () => goToPrevSlide());
-	slideContainer.on('a-slides_goto-slide', e => goToSlide(e.detail));
+	on(slideContainer, 'a-slides_refresh-slide', () => refreshSlide());
+	on(slideContainer, 'a-slides_next-slide', () => goToNextSlide());
+	on(slideContainer, 'a-slides_previous-slide', () => goToPrevSlide());
+	on(slideContainer, 'a-slides_goto-slide', e => goToSlide(e.detail));
 
-	slideContainer.on('scroll', () => slideContainer.scrollLeft = 0);
+	on(slideContainer, 'scroll', () => slideContainer.scrollLeft = 0);
 
 	plugins.forEach(plugin => {
 		if (typeof plugin === 'function') {

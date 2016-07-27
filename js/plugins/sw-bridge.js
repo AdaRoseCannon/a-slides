@@ -2,6 +2,8 @@
 
 const slideController = require('./slide-controller');
 
+const { fire, on } = require('events');
+
 module.exports = function ({slideContainer}) {
 
 	function sendSWMessage(message) {
@@ -46,20 +48,20 @@ module.exports = function ({slideContainer}) {
 
 			slideController.makeAndBindButton('Parent', function () {
 				controller = true;
-				slideContainer.on('a-slides_slide-setup', ({detail}) => sendSWMessage({
+				on(slideContainer, 'a-slides_slide-setup', ({detail}) => sendSWMessage({
 					aSlideEvent: 'a-slides_goto-slide',
 					detail: {
 						slide: slideContainer.$(`.a-slides_slide[data-slide-id="${detail.slideId}"]`).prevAll().length
 					}
 				}));
-				slideContainer.on('a-slides_trigger-event', () => sendSWMessage({aSlideEvent: 'a-slides_trigger-event'}));
-				slideContainer.on('a-slides_previous-slide', () => sendSWMessage({aSlideEvent: 'a-slides_previous-slide'}));
+				on(slideContainer, 'a-slides_trigger-event', () => sendSWMessage({aSlideEvent: 'a-slides_trigger-event'}));
+				on(slideContainer, 'a-slides_previous-slide', () => sendSWMessage({aSlideEvent: 'a-slides_previous-slide'}));
 			});
 
 			navigator.serviceWorker.addEventListener('message', function (e) {
 				if (controller) return;
 				if (e.data.aSlideEvent) {
-					slideContainer.fire(e.data.aSlideEvent, e.data.detail);
+					fire(slideContainer, e.data.aSlideEvent, e.data.detail);
 				}
 			});
 		}

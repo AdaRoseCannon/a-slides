@@ -1,5 +1,7 @@
 'use strict';
 
+const { fire, on } = require('events');
+
 module.exports = function ({slideContainer}) {
 	window.addEventListener('keyup', e => {
 		switch (e.keyCode) {
@@ -7,14 +9,14 @@ module.exports = function ({slideContainer}) {
 			// Left Arrow
 			case 37:
 			case 33:
-				slideContainer.fire('a-slides_previous-slide');
+				fire(slideContainer, 'a-slides_previous-slide');
 				break;
 
 			// Right Arrow
 			case 13:
 			case 39:
 			case 34:
-				slideContainer.fire('a-slides_trigger-event');
+				fire(slideContainer, 'a-slides_trigger-event');
 				break;
 
 			case 66:
@@ -28,7 +30,7 @@ module.exports = function ({slideContainer}) {
 		}
 	});
 
-	slideContainer.on('click', function () {
-		this.fire('a-slides_trigger-event');
+	on(slideContainer, 'click', function () {
+		fire(this, 'a-slides_trigger-event');
 	});
 };

@@ -4,6 +4,7 @@ const slideController = require('./slide-controller');
 const EventEmitter = require('events').EventEmitter;
 const Peer = require('peerjs');
 const MASTER_CONTROLLER_NAME = 'ada-slides-controller';
+const { fire, on } = require('events');
 
 // Define peerJS Details
 
@@ -74,7 +75,7 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 			if (peerController) {
 				console.log('You have the power', id);
 				slideContainer.classList.add('controller');
-				myPeer.on('connection', dataConn => {
+				on(myPeer, 'connection', dataConn => {
 					console.log('recieved connection from', dataConn.peer);
 					user.addClient(dataConn);
 				});
@@ -82,9 +83,9 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 				console.log('You are a client', id);
 				myPeer.connect(MASTER_CONTROLLER_NAME).on('data', data => {
 					console.log('recieved instructions', JSON.stringify(data));
-					user.fire(data.type, data.data);
+					fire(user, data.type, data.data);
 				});
-				myPeer.on('connection', dataConn => {
+				on(myPeer, 'connection', dataConn => {
 					console.log('recieved connection from', dataConn.peer);
 					user.addClient(dataConn);
 				});
@@ -94,15 +95,15 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 	})
 	.then(user => {
 
-		slideContainer.on('a-slides_slide-setup', ({detail: {slideId}}) => user.requestSlide.bind(user)(slideId));
-		slideContainer.on('a-slides_trigger-event', () => user.triggerRemoteEvent.bind(user)());
-		slideContainer.on('a-slides_refresh-slide', () => user.triggerRefresh.bind(user)());
-		user.on('goToSlide', slide => slideContainer.fire('a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${slide}"]`)}));
-		user.on('triggerEvent', () => slideContainer.fire('a-slides_trigger-event'));
-		user.on('triggerRefresh', () => slideContainer.fire('a-slides_refresh-slide'));
+		on(slideContainer, 'a-slides_slide-setup', ({detail: {slideId}}) => user.requestSlide.bind(user)(slideId));
+		on(slideContainer, 'a-slides_trigger-event', () => user.triggerRemoteEvent.bind(user)());
+		on(slideContainer, 'a-slides_refresh-slide', () => user.triggerRefresh.bind(user)());
+		on(user, 'goToSlide', slide => fire(slideContainer, 'a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${slide}"]`)}));
+		on(user, 'triggerEvent', () => fire(slideContainer, 'a-slides_trigger-event'));
+		on(user, 'triggerRefresh', () => fire(slideContainer, 'a-slides_refresh-slide'));
 
 		// Further Event Handling
-		myPeer.on('error', e => {
+		on(myPeer, 'error', e => {
 
 			// Handle the could not connect situation
 			if (e.type === 'peer-unavailable' && e.message === 'Could not connect to peer ada-slides-controller') {
@@ -118,7 +119,7 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 			}
 		});
 
-		myPeer.on('disconnected', function () {
+		on(myPeer, 'disconnected', function () {
 			setTimeout(() => {
 				if (!this.destroyed) {
 					this.reconnect();
