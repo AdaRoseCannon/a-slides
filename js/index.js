@@ -1,5 +1,3 @@
-/* global $, $$ */
-
 'use strict';
 
 const slideSelector = slideId => `.a-slides_slide[data-slide-id="${slideId}"] .a-slides_slide-content`;
@@ -46,10 +44,10 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 	// Slide is a dom element or an integer
 	function goToSlide({slide}) {
-		const newSlide = typeof slide === 'number' ? $$('.a-slides_slide')[slide] : slide;
+		const newSlide = typeof slide === 'number' ? slideContainer.querySelectorAll('.a-slides_slide')[slide] : slide;
 		if (!newSlide) return;
 		const newSlideId = newSlide.dataset.slideId;
-		const oldSlide = $('.a-slides_slide.active');
+		const oldSlide = slideContainer.querySelector('.a-slides_slide.active');
 		if (newSlide && newSlide !== oldSlide) {
 			if (oldSlide) {
 				oldSlide.classList.remove('active');
@@ -63,7 +61,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	}
 
 	function goToNextSlide() {
-		goToSlide({slide: $('.a-slides_slide.active').prevAll().length + 1});
+		goToSlide({slide: slideContainer.querySelector('.a-slides_slide.active').prevAll().length + 1});
 	}
 
 	const goToPrevSlide = () => {
@@ -74,7 +72,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		}
 
 		// Wait a smidge before changing slides.
-		slideContainer.nextSlideTimeOut = setTimeout(() => goToSlide({slide: $('.a-slides_slide.active').prevAll().length - 1}), 10);
+		slideContainer.nextSlideTimeOut = setTimeout(() => goToSlide({slide: slideContainer.querySelector('.a-slides_slide.active').prevAll().length - 1}), 10);
 	};
 
 	this.currentEvents = {
@@ -94,7 +92,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	}.bind(this));
 
 	function refreshSlide() {
-		const id = $('.a-slides_slide.active').dataset.slideId;
+		const id = slideContainer.querySelector('.a-slides_slide.active').dataset.slideId;
 		teardownSlide(id);
 		setupSlide(id);
 	}

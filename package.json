@@ -18,7 +18,6 @@
     "node-sass": "^3.4.2",
     "peerjs": "~0.3.14",
     "sw-toolbox": "^2.0.4",
-    "tween.js": "^15.0.0",
     "webpack": "^1.12.14"
   },
   "engines": {

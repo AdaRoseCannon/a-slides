@@ -19,7 +19,7 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 	return new Promise((resolve, reject) => {
 		myPeer = (peerController ? new Peer(MASTER_CONTROLLER_NAME, peerSettings) : new Peer(peerSettings))
 			.on('error', e => {
-				if (e.type === "unavailable-id") {
+				if (e.type === 'unavailable-id') {
 					reject(Error('Cannot take control, controller already present.'));
 				} else {
 					reject(e);
@@ -68,7 +68,7 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 				this.sendSignalToClients('triggerRefresh');
 			}
 		}
-		let user = new WebrtcUser(!!peerController);
+		const user = new WebrtcUser(!!peerController);
 
 		return new Promise(function (resolve) {
 			if (peerController) {
@@ -94,7 +94,7 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 	})
 	.then(user => {
 
-		slideContainer.on('a-slides_slide-setup', ({detail: {slideId}}) =>  user.requestSlide.bind(user)(slideId));
+		slideContainer.on('a-slides_slide-setup', ({detail: {slideId}}) => user.requestSlide.bind(user)(slideId));
 		slideContainer.on('a-slides_trigger-event', () => user.triggerRemoteEvent.bind(user)());
 		slideContainer.on('a-slides_refresh-slide', () => user.triggerRefresh.bind(user)());
 		user.on('goToSlide', slide => slideContainer.fire('a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${slide}"]`)}));
@@ -105,7 +105,7 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 		myPeer.on('error', e => {
 
 			// Handle the could not connect situation
-			if (e.type === "peer-unavailable" && e.message === 'Could not connect to peer ada-slides-controller') {
+			if (e.type === 'peer-unavailable' && e.message === 'Could not connect to peer ada-slides-controller') {
 
 				// Wait a few seconds and try reconnecting
 				console.log('Lost connection to client.');
@@ -175,7 +175,7 @@ module.exports = function ({peerSettings}) {
 
 		// if the client search param is present then jump
 		// straight into presentation and try to connect.
-		if (location.search === "?client") {
+		if (location.search === '?client') {
 			slideContainer.classList.add('presentation');
 			webRTCSetup({
 				peerSettings,

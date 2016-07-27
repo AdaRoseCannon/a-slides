@@ -1,6 +1,6 @@
 'use strict';
 
-// Render the slides markdown.
+// Add a little widget to the top of the screen for some slide functions
 module.exports = function ({slideContainer}) {
 
 	const slideController = document.createElement('div');
