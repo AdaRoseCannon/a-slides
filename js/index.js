@@ -16,7 +16,9 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		fire(slideContainer, 'a-slides_slide-setup', {slideId});
 
 		if (slideData[slideId]) {
-			slideData[slideId].setup.bind(slideContainer.$(slideSelector(slideId)))();
+			if (slideData[slideId].setup) {
+				slideData[slideId].setup.bind(slideContainer.querySelector(slideSelector(slideId)))();
+			}
 		} else {
 			slideData[slideId] = {
 				setup() {},
@@ -25,7 +27,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			};
 		}
 
-		this.currentEvents = slideData[slideId].action.bind(slideContainer.$(slideSelector(slideId)))();
+		this.currentEvents = slideData[slideId].action.bind(slideContainer.querySelector(slideSelector(slideId)))();
 		noEvents = 0;
 
 		// if a go to new slide is already triggered then cancel it so
@@ -40,7 +42,9 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 		fire(slideContainer, 'a-slides_slide-teardown', {slideId});
 		if (slideData[slideId]) {
-			slideData[slideId].teardown.bind(slideContainer.$(slideSelector(slideId)))();
+			if (slideData[slideId].teardown) {
+				slideData[slideId].teardown.bind(slideContainer.querySelector(slideSelector(slideId)))();
+			}
 		}
 	}
 

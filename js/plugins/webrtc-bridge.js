@@ -98,7 +98,7 @@ function webRTCSetup({peerSettings, peerController, slideContainer}) {
 		on(slideContainer, 'a-slides_slide-setup', ({detail: {slideId}}) => user.requestSlide.bind(user)(slideId));
 		on(slideContainer, 'a-slides_trigger-event', () => user.triggerRemoteEvent.bind(user)());
 		on(slideContainer, 'a-slides_refresh-slide', () => user.triggerRefresh.bind(user)());
-		on(user, 'goToSlide', slide => fire(slideContainer, 'a-slides_goto-slide', {slide: slideContainer.$(`.slide[data-slide-id="${slide}"]`)}));
+		on(user, 'goToSlide', slide => fire(slideContainer, 'a-slides_goto-slide', {slide: slideContainer.querySelector(`.slide[data-slide-id="${slide}"]`)}));
 		on(user, 'triggerEvent', () => fire(slideContainer, 'a-slides_trigger-event'));
 		on(user, 'triggerRefresh', () => fire(slideContainer, 'a-slides_refresh-slide'));
 
