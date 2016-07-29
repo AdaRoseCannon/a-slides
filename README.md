@@ -163,6 +163,13 @@ Slide animations are defined as such:
 
 ## Events
 
+* a-slides_slide-setup
+* a-slides_slide-teardown
+* a-slides_refresh-slide (fireable)
+* a-slides_next-slide (fireable)
+* a-slides_previous-slide (fireable)
+* a-slides_goto-slide (fireable)
+
 ```javascript
 // goto a slide by id or by dom element
 slideContainer.fire('a-slides_goto-slide', {slide: 0});
