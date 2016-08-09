@@ -9,15 +9,24 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 	let noEvents = 0;
 
+	// prepare a slide to be used
 	const setupSlide = function setupSlide(slideId) {
+
+		if (this.nextEvents) {
+			this.nextEvents.teardown.bind(this.nextSlide);
+			this.nextEvents = null;
+			this.nextSlide = null;
+		}
 
 		location.hash = slideId;
 
-		fire(slideContainer, 'a-slides_slide-setup', {slideId});
+		fire(slideContainer, 'a-slides_slide-setup', { slideId });
+
+		this.nextSlide = slideContainer.querySelector(slideSelector(slideId));
 
 		if (slideData[slideId]) {
 			if (slideData[slideId].setup) {
-				slideData[slideId].setup.bind(slideContainer.querySelector(slideSelector(slideId)))();
+				slideData[slideId].setup.bind(this.nextSlide)();
 			}
 		} else {
 			slideData[slideId] = {
@@ -27,8 +36,20 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			};
 		}
 
-		this.currentEvents = slideData[slideId].action.bind(slideContainer.querySelector(slideSelector(slideId)))();
+		this.nextEvents = slideData[slideId].action.bind(this.nextSlide)();
 		noEvents = 0;
+	}.bind(this);
+
+	// use that slide
+	const loadNextSlide = function loadNextSlide() {
+
+		this.currentEvents = this.nextEvents;
+		this.currentSlide = this.nextSlide;
+
+		this.nextEvents = null;
+		this.nextSlide = null;
+
+		fire(slideContainer, 'a-slides_slide-show', { slideId: this.currentSlide.dataset.slideId });
 
 		// if a go to new slide is already triggered then cancel it so
 		// we don't accidentially go to the wrong slide.
@@ -36,7 +57,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 		// Do first action
 		this.currentEvents.next();
-	}.bind(this);
+	};
 
 	function teardownSlide(slideId) {
 
@@ -57,7 +78,10 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		if (newSlide && newSlide !== oldSlide) {
 			if (oldSlide) {
 				oldSlide.classList.remove('active');
-				once(oldSlide, 'transitionend', () => teardownSlide(oldSlide.dataset.slideId));
+				once(oldSlide, 'transitionend', () => {
+					loadNextSlide();
+					teardownSlide(oldSlide.dataset.slideId);
+				});
 			}
 			off(newSlide, 'transitionend');
 			newSlide.classList.add('active');
@@ -101,6 +125,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		const id = slideContainer.querySelector('.a-slides_slide.active').dataset.slideId;
 		teardownSlide(id);
 		setupSlide(id);
+		loadNextSlide();
 	}
 
 	on(slideContainer, 'a-slides_refresh-slide', () => refreshSlide());
@@ -118,10 +143,9 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			});
 		}
 	});
-
 }
 
-ASlide.prototype.plugins = {
+ASlide.plugins = {
     deepLinking: require('./plugins/deep-linking'),
     interactionKeyboard: require('./plugins/interaction-keyboard-mouse'),
     interactionTouch: require('./plugins/interaction-touch'),

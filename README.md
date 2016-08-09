@@ -164,6 +164,7 @@ Slide animations are defined as such:
 ## Events
 
 * a-slides_slide-setup
+* a-slides_slide-show
 * a-slides_slide-teardown
 * a-slides_refresh-slide (fireable)
 * a-slides_next-slide (fireable)
