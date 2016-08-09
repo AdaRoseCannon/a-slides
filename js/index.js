@@ -36,14 +36,14 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			};
 		}
 
-		this.nextEvents = slideData[slideId].action.bind(this.nextSlide)();
+		this.nextEvents = slideData[slideId];
 		noEvents = 0;
 	}.bind(this);
 
 	// use that slide
 	const loadNextSlide = function loadNextSlide() {
 
-		this.currentEvents = this.nextEvents;
+		this.currentEvents = this.nextEvents.action.bind(this.nextSlide)();
 		this.currentSlide = this.nextSlide;
 
 		this.nextEvents = null;
