@@ -57,7 +57,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 		// Do first action
 		this.currentEvents.next();
-	};
+	}.bind(this);
 
 	function teardownSlide(slideId) {
 
