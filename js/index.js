@@ -87,6 +87,10 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			newSlide.classList.add('active');
 			teardownSlide(newSlideId);
 			setupSlide(newSlideId);
+
+			if (!oldSlide) {
+				loadNextSlide();
+			}
 		}
 	}
 
