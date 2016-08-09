@@ -9,6 +9,14 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 	let noEvents = 0;
 
+	function getCurrentSlide() {
+		return slideContainer.querySelector('.a-slides_slide[data-slide-id].active');
+	}
+
+	function getNextSlide() {
+		return slideContainer.querySelector('.a-slides_slide[data-slide-id].active + .a-slides_slide[data-slide-id]');
+	}
+
 	// prepare a slide to be used
 	const setupSlide = function setupSlide(slideId) {
 
@@ -70,11 +78,11 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	}
 
 	// Slide is a dom element or an integer
-	function goToSlide({slide}) {
-		const newSlide = typeof slide === 'number' ? slideContainer.querySelectorAll('.a-slides_slide')[slide] : slide;
+	const goToSlide = function goToSlide({slide}) {
+		const newSlide = typeof slide === 'number' ? slideContainer.querySelectorAll('.a-slides_slide[data-slide-id]')[slide] : slide;
 		if (!newSlide) return;
 		const newSlideId = newSlide.dataset.slideId;
-		const oldSlide = slideContainer.querySelector('.a-slides_slide.active');
+		const oldSlide = getCurrentSlide();
 		if (newSlide && newSlide !== oldSlide) {
 			if (oldSlide) {
 				oldSlide.classList.remove('active');
@@ -86,16 +94,21 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			off(newSlide, 'transitionend');
 			newSlide.classList.add('active');
 			teardownSlide(newSlideId);
-			setupSlide(newSlideId);
 
-			if (!oldSlide) {
-				loadNextSlide();
+			if (!this.nextEvents) {
+				setupSlide(newSlideId);
 			}
+			loadNextSlide();
+
+			// preload the nextslide.
+			const nextSlideId = getNextSlide().dataset.slideId;
+			setupSlide(nextSlideId);
+
 		}
-	}
+	}.bind(this);
 
 	function goToNextSlide() {
-		goToSlide({slide: prevAll(slideContainer.querySelector('.a-slides_slide.active')).length + 1});
+		goToSlide({slide: getNextSlide()});
 	}
 
 	const goToPrevSlide = () => {
@@ -106,7 +119,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		}
 
 		// Wait a smidge before changing slides.
-		slideContainer.nextSlideTimeOut = setTimeout(() => goToSlide({slide: prevAll(slideContainer.querySelector('.a-slides_slide.active')).length - 1}), 10);
+		slideContainer.nextSlideTimeOut = setTimeout(() => goToSlide({slide: prevAll(getCurrentSlide()).length - 1}), 10);
 	};
 
 	this.currentEvents = {
@@ -126,7 +139,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	}.bind(this));
 
 	function refreshSlide() {
-		const id = slideContainer.querySelector('.a-slides_slide.active').dataset.slideId;
+		const id = getCurrentSlide().dataset.slideId;
 		teardownSlide(id);
 		setupSlide(id);
 		loadNextSlide();
