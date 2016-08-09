@@ -26,15 +26,13 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			this.nextSlide = null;
 		}
 
-		location.hash = slideId;
-
 		fire(slideContainer, 'a-slides_slide-setup', { slideId });
 
-		this.nextSlide = slideContainer.querySelector(slideSelector(slideId));
+		this.nextSlide = slideContainer.querySelector(`.a-slides_slide[data-slide-id="${slideId}"]`);
 
 		if (slideData[slideId]) {
 			if (slideData[slideId].setup) {
-				slideData[slideId].setup.bind(this.nextSlide)();
+				slideData[slideId].setup.bind(slideContainer.querySelector(slideSelector(slideId)))();
 			}
 		} else {
 			slideData[slideId] = {
@@ -56,6 +54,8 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 
 		this.nextEvents = null;
 		this.nextSlide = null;
+
+		location.hash = this.currentSlide.dataset.slideId;
 
 		fire(slideContainer, 'a-slides_slide-show', { slideId: this.currentSlide.dataset.slideId });
 
@@ -87,22 +87,39 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			if (oldSlide) {
 				oldSlide.classList.remove('active');
 				once(oldSlide, 'transitionend', () => {
-					loadNextSlide();
+					if (this.nextEvents) {
+						loadNextSlide();
+
+						// preload the next slide.
+						const nextSlide = getNextSlide();
+						if (nextSlide) {
+							off(nextSlide, 'transitionend');
+							teardownSlide(nextSlide.dataset.slideId);
+							setupSlide(nextSlide.dataset.slideId);
+						}
+					}
 					teardownSlide(oldSlide.dataset.slideId);
 				});
 			}
 			off(newSlide, 'transitionend');
 			newSlide.classList.add('active');
-			teardownSlide(newSlideId);
 
-			if (!this.nextEvents) {
+			// in the case where the next slide is not the on buffered.
+			// Or in the case where there this is the first slide
+			// show this side immediately
+			if (
+				newSlide !== this.nextSlide ||
+				!oldSlide
+			) {
 				setupSlide(newSlideId);
+				loadNextSlide();
+				const nextSlide = getNextSlide();
+				if (nextSlide) {
+					off(nextSlide, 'transitionend');
+					teardownSlide(nextSlide.dataset.slideId);
+					setupSlide(nextSlide.dataset.slideId);
+				}
 			}
-			loadNextSlide();
-
-			// preload the nextslide.
-			const nextSlideId = getNextSlide().dataset.slideId;
-			setupSlide(nextSlideId);
 
 		}
 	}.bind(this);

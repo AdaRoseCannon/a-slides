@@ -5,6 +5,7 @@
   "description": "A-Slides",
   "scripts": {
     "build:js": "webpack -d -p --optimize-dedupe",
+    "build:big": "webpack",
     "build:sass": "node-sass ./sass/a-slides.scss -o ./build/",
     "build": "npm run build:js && npm run build:sass"
   },
