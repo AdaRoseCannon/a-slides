@@ -48,7 +48,7 @@ module.exports = function ({slideContainer}) {
 
 			slideController.makeAndBindButton('Parent', function () {
 				controller = true;
-				on(slideContainer, 'a-slides_slide-setup', ({detail}) => sendSWMessage({
+				on(slideContainer, 'a-slides_slide-show', ({detail}) => sendSWMessage({
 					aSlideEvent: 'a-slides_goto-slide',
 					detail: {
 						slide: prevAll(slideContainer.querySelector(`.a-slides_slide[data-slide-id="${detail.slideId}"]`)).length
