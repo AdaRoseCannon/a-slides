@@ -49,7 +49,8 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	// use that slide
 	const loadNextSlide = function loadNextSlide() {
 
-		this.currentEvents = this.nextEvents.action.bind(this.nextSlide)();
+		this.currentEvents = this.nextEvents.action
+			.bind(this.nextSlide.querySelector('.a-slides_slide-content'))();
 		this.currentSlide = this.nextSlide;
 
 		this.nextEvents = null;
