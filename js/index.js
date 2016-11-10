@@ -21,7 +21,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 	const setupSlide = function setupSlide(slideId) {
 
 		if (this.nextEvents) {
-			this.nextEvents.teardown.bind(this.nextSlide);
+			this.nextEvents.teardown.bind(this.nextSlide.querySelector('.a-slides_slide-content'))();
 			this.nextEvents = null;
 			this.nextSlide = null;
 		}
@@ -56,13 +56,21 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		this.nextEvents = null;
 		this.nextSlide = null;
 
-		location.hash = this.currentSlide.dataset.slideId;
-
 		fire(slideContainer, 'a-slides_slide-show', { slideId: this.currentSlide.dataset.slideId });
 
 		// if a go to new slide is already triggered then cancel it so
 		// we don't accidentially go to the wrong slide.
 		clearTimeout(this.nextSlideTimeOut);
+
+		location.hash = this.currentSlide.dataset.slideId;
+
+		// preload the next slide.
+		const nextSlide = getNextSlide();
+		if (nextSlide) {
+			off(nextSlide, 'transitionend');
+			teardownSlide(nextSlide.dataset.slideId);
+			setupSlide(nextSlide.dataset.slideId);
+		}
 
 		// Do first action
 		this.currentEvents.next();
@@ -85,24 +93,9 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		const newSlideId = newSlide.dataset.slideId;
 		const oldSlide = getCurrentSlide();
 		if (newSlide && newSlide !== oldSlide) {
-			if (oldSlide) {
-				oldSlide.classList.remove('active');
-				once(oldSlide, 'transitionend', () => {
-					if (this.nextEvents) {
-						loadNextSlide();
 
-						// preload the next slide.
-						const nextSlide = getNextSlide();
-						if (nextSlide) {
-							off(nextSlide, 'transitionend');
-							teardownSlide(nextSlide.dataset.slideId);
-							setupSlide(nextSlide.dataset.slideId);
-						}
-					}
-					teardownSlide(oldSlide.dataset.slideId);
-				});
-			}
 			off(newSlide, 'transitionend');
+			if (oldSlide) oldSlide.classList.remove('active');
 			newSlide.classList.add('active');
 
 			// in the case where the next slide is not the on buffered.
@@ -114,14 +107,15 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 			) {
 				setupSlide(newSlideId);
 				loadNextSlide();
-				const nextSlide = getNextSlide();
-				if (nextSlide) {
-					off(nextSlide, 'transitionend');
-					teardownSlide(nextSlide.dataset.slideId);
-					setupSlide(nextSlide.dataset.slideId);
-				}
+				return;
 			}
 
+			once(newSlide, 'transitionend', () => {
+				if (this.nextEvents) {
+					loadNextSlide();
+				}
+				if (oldSlide) teardownSlide(oldSlide.dataset.slideId);
+			});
 		}
 	}.bind(this);
 
@@ -137,7 +131,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		}
 
 		// Wait a smidge before changing slides.
-		slideContainer.nextSlideTimeOut = setTimeout(() => goToSlide({slide: prevAll(getCurrentSlide()).length - 1}), 10);
+		slideContainer.nextSlideTimeOut = setTimeout(() => goToSlide({slide: prevAll(getCurrentSlide()).length - 1}), 100);
 	};
 
 	this.currentEvents = {
@@ -152,7 +146,7 @@ function ASlide(slideData, {plugins = [], slideContainer = document.body} = {}) 
 		if (this.currentEvents.next().done) {
 
 			// Wait a smidge before triggering the next slide.
-			this.nextSlideTimeOut = setTimeout(goToNextSlide, 10);
+			this.nextSlideTimeOut = setTimeout(goToNextSlide, 100);
 		}
 	}.bind(this));
 
@@ -187,7 +181,7 @@ ASlide.plugins = {
     markdownTransform: require('./plugins/markdown'),
     slideController: require('./plugins/slide-controller'),
     bridgeServiceWorker: require('./plugins/sw-bridge'),
-    bridgeWebRTC: require('./plugins/webrtc-bridge'),
+    // bridgeWebRTC: require('./plugins/webrtc-bridge'),
 };
 
 module.exports = ASlide;
